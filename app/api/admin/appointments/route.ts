@@ -1,18 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth0 } from '@/lib/auth0';
 import { supabaseAdmin } from '@/lib/supabase-admin';
-
-export function formatTimeTo12Hour(time: string): string {
-  if (!time) return time;
-  const [hour, minute] = time.split(':').map(Number);
-  const date = new Date();
-  date.setHours(hour, minute);
-  return date.toLocaleTimeString('en-US', {
-    hour: 'numeric',
-    minute: '2-digit',
-    hour12: true,
-  });
-}
+import { formatTimeTo12Hour } from '@/lib/formatTime';
 
 // GET all appointments (admin only)
 export async function GET() {
