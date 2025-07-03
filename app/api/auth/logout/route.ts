@@ -4,7 +4,7 @@ import { serialize } from 'cookie';
 export async function GET(req: NextRequest) {
   const baseUrl = process.env.AUTH0_ISSUER_BASE_URL; 
   const clientId = process.env.AUTH0_CLIENT_ID!;
-  const returnTo = encodeURIComponent('http://localhost:3000'); // must be in Allowed Logout URLs
+  const returnTo = encodeURIComponent('https://chato-blendz.vercel.app/');
 
   // Construct the Auth0 logout URL
   const logoutUrl = `${baseUrl}/v2/logout?client_id=${clientId}&returnTo=${returnTo}`;
