@@ -67,7 +67,7 @@ export async function PUT(req: NextRequest) {
 
   if (!id || !name || !date || !time) {
     return NextResponse.json(
-      { error: 'Missing required fields: id, name, date, and time are required.' },
+      { error: 'Missing required fields: id, name, date, and time are required!' },
       { status: 400 }
     );
   }
