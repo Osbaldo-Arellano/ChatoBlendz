@@ -48,6 +48,24 @@ export default function AppointmentCalendarClient() {
     }
   }
 
+  async function handleUpdate(updated: Appointment) {
+    const res = await fetch('/api/admin/appointments', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include', // ✅ required for cookies
+      body: JSON.stringify(updated),
+    });
+
+    if (res.ok) {
+      setAppointments((prev) =>
+        prev.map((a) => (a.id === updated.id ? { ...a, ...updated } : a))
+      );
+    } else {
+      alert('Failed to update appointment');
+    }
+  }
+
+
   if (loading) {
     return (
       <Box display="flex" justifyContent="center" mt={4}>
@@ -60,6 +78,7 @@ export default function AppointmentCalendarClient() {
     <AppointmentCalendarView
       appointments={appointments}
       onDelete={handleDelete}
+      onUpdate={handleUpdate}
     />
   );
 }
