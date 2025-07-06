@@ -88,7 +88,6 @@ export async function PUT(req: NextRequest) {
 
   const body = await req.json();
   const { id, date, start_time, end_time, reason } = body;
-//   console.log(body)
   if (!id || !start_time || !end_time || !date) {
     return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
   }
@@ -98,8 +97,6 @@ export async function PUT(req: NextRequest) {
     .update({ start_time, end_time, reason })
     .eq('id', id)
     .select();
-
-  console.log(data);
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });

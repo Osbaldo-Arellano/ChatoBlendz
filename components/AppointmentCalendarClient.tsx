@@ -112,6 +112,8 @@ export default function AppointmentCalendarClient() {
       setBlockedTimes((prev) =>
         prev.map((b) => (b.id === updatedBlock.id ? updatedBlock : b))
       );
+
+      await fetchData()
     } else {
       alert('Failed to update blocked time');
     }
