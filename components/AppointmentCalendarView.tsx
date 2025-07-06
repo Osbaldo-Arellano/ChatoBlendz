@@ -12,21 +12,30 @@ import {
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-import { Appointment } from './AppointmentCalendarClient';
+import { Appointment, BlockedTime } from './AppointmentCalendarClient';
 import { useMemo, useRef, useEffect, useState, useCallback } from 'react';
 import { addDays, format } from 'date-fns';
+import BlockedTimeDialog from './BlockedTimeDialog';
+
 
 const DAYS_PER_PAGE = 14;
 
 export default function AppointmentCalendarView({
   appointments,
+  blockedTimes,
   onDelete,
   onUpdate,
+  onBlockDelete,
+  onBlockUpdate,
 }: {
   appointments: Appointment[];
+  blockedTimes: BlockedTime[];
   onDelete: (id: string) => void;
   onUpdate: (updated: Appointment) => void;
+  onBlockDelete: (id: string) => void;
+  onBlockUpdate: (updated: BlockedTime) => void;
 }) {
+  const [editingBlock, setEditingBlock] = useState<BlockedTime | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [visibleDays, setVisibleDays] = useState(DAYS_PER_PAGE);
   const [showScrollTop, setShowScrollTop] = useState(false);
@@ -34,7 +43,6 @@ export default function AppointmentCalendarView({
   const startDate = useMemo(() => new Date(), []);
   const endDate = useMemo(() => addDays(startDate, visibleDays), [startDate, visibleDays]);
 
-  // Scroll and infinite loading
   const handleScroll = useCallback(() => {
     const el = containerRef.current;
     if (!el) return;
@@ -55,7 +63,6 @@ export default function AppointmentCalendarView({
     };
   }, [handleScroll]);
 
-  // Generate visible day list
   const daysToRender = useMemo(() => {
     const days = [];
     for (let i = 0; i < visibleDays; i++) {
@@ -64,7 +71,6 @@ export default function AppointmentCalendarView({
     return days;
   }, [startDate, visibleDays]);
 
-  // Group appointments by date
   const groupedAppointments = useMemo(() => {
     const map = new Map<string, Appointment[]>();
     for (const appt of appointments) {
@@ -73,6 +79,15 @@ export default function AppointmentCalendarView({
     }
     return map;
   }, [appointments]);
+
+  const groupedBlocked = useMemo(() => {
+    const map = new Map<string, BlockedTime[]>();
+    for (const block of blockedTimes) {
+      if (!map.has(block.date)) map.set(block.date, []);
+      map.get(block.date)!.push(block);
+    }
+    return map;
+  }, [blockedTimes]);
 
   return (
     <Box sx={{ position: 'relative' }}>
@@ -92,6 +107,7 @@ export default function AppointmentCalendarView({
         {daysToRender.map((day) => {
           const dateStr = format(day, 'yyyy-MM-dd');
           const dayAppointments = groupedAppointments.get(dateStr) || [];
+          const dayBlocked = groupedBlocked.get(dateStr) || [];
 
           return (
             <Box key={dateStr} sx={{ px: 2, py: 3 }}>
@@ -99,6 +115,49 @@ export default function AppointmentCalendarView({
                 {format(day, 'EEEE, MMMM d, yyyy')}
               </Typography>
               <Divider />
+
+          {dayBlocked.map((block) => (
+            <Box
+              key={block.id}
+              sx={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                py: 2,
+                borderBottom: '1px solid #eee',
+              }}
+            >
+              <Box>
+                <Typography fontWeight="bold" color="error">
+                  Blocked Time
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  {block.reason || 'No reason specified'}
+                </Typography>
+                <Typography variant="body2">
+                  {block.start_time} – {block.end_time}
+                </Typography>
+              </Box>
+
+              <Stack direction="row" spacing={1}>
+                <IconButton
+                    aria-label="edit"
+                    color="primary"
+                    onClick={() => setEditingBlock(block)}
+                  >
+                  <EditIcon />
+                </IconButton>
+                <IconButton
+                  aria-label="delete"
+                  color="error"
+                  onClick={() => onBlockDelete(block.id)}
+                >
+                  <DeleteIcon />
+                </IconButton>
+              </Stack>
+            </Box>
+            
+          ))}
 
               {dayAppointments.length > 0 ? (
                 dayAppointments.map((appt) => (
@@ -142,6 +201,7 @@ export default function AppointmentCalendarView({
                         <DeleteIcon />
                       </IconButton>
                     </Stack>
+                    
                   </Box>
                 ))
               ) : (
@@ -149,8 +209,11 @@ export default function AppointmentCalendarView({
                   No appointments for this day.
                 </Typography>
               )}
+              
             </Box>
+            
           );
+          
         })}
       </Paper>
 
@@ -168,6 +231,18 @@ export default function AppointmentCalendarView({
         >
           <KeyboardArrowUpIcon />
         </Fab>
+      )}
+
+      {editingBlock && (
+        <BlockedTimeDialog
+          open={true}
+          block={editingBlock}
+          onClose={() => setEditingBlock(null)}
+          onSave={(updatedBlock) => {
+            onBlockUpdate(updatedBlock);
+            setEditingBlock(null);
+          }}
+        />
       )}
     </Box>
   );
