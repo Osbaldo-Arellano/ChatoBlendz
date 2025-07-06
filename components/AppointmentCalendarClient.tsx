@@ -5,6 +5,7 @@ import { CircularProgress, Box } from '@mui/material';
 import AppointmentCalendarView from './AppointmentCalendarView';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import BlockTimeButton from './BlockTimeButton';
 
 export type Appointment = {
   id: string;
@@ -129,6 +130,12 @@ export default function AppointmentCalendarClient() {
 
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
+      <Box display="flex" justifyContent="flex-end" mb={2} sx={{
+        m:2
+      }}>
+        <BlockTimeButton onSuccess={fetchData} />
+      </Box>
+
       <AppointmentCalendarView
         appointments={appointments}
         blockedTimes={blockedTimes}

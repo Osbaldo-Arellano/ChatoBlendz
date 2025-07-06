@@ -24,35 +24,33 @@ export async function GET() {
   return NextResponse.json(formatted);
 }
 
-// POST: block out selected days (1 week at a time)
 export async function POST(req: NextRequest) {
-  const session = await auth0.getSession(req);
+  const session = await auth0.getSession();
   if (!session) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   const body = await req.json();
   const {
-    repeatDays,   // array of day-of-week integers [0 = Sunday, ..., 6 = Saturday]
-    startTime,    // string "09:00"
-    endTime,      // string "17:00"
-    reason        // optional string
+    repeatDays,   // e.g., [0, 2, 4]
+    startTime,    // "09:00"
+    endTime,      // "17:00"
+    reason,       // optional
+    startDate     // new: "2025-07-10"
   } = body;
 
-  if (!repeatDays || !Array.isArray(repeatDays) || repeatDays.length === 0 || !startTime || !endTime) {
-    return NextResponse.json({ error: 'Missing required fields: repeatDays, startTime, endTime.' }, { status: 400 });
+  if (!repeatDays || !Array.isArray(repeatDays) || repeatDays.length === 0 || !startTime || !endTime || !startDate) {
+    return NextResponse.json({ error: 'Missing required fields.' }, { status: 400 });
   }
 
-  const today = new Date();
-  const startOfWeek = new Date(today);
-  startOfWeek.setDate(today.getDate() - today.getDay()); // move to Sunday
+  const anchor = new Date(startDate);
+  anchor.setHours(0, 0, 0, 0);
 
   const blocks: any[] = [];
 
-  for (const dayOfWeek of repeatDays) {
-    const targetDate = new Date(startOfWeek);
-    targetDate.setDate(startOfWeek.getDate() + dayOfWeek);
-
+  for (const dayOffset of repeatDays) {
+    const targetDate = new Date(anchor);
+    targetDate.setDate(anchor.getDate() + dayOffset);
     const dateStr = targetDate.toISOString().split('T')[0]; // "YYYY-MM-DD"
 
     blocks.push({
@@ -73,9 +71,9 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-
   return NextResponse.json(data);
 }
+
 
 // PUT: update a blocked time (admin only)
 export async function PUT(req: NextRequest) {
