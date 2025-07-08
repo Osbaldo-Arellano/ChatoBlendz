@@ -74,7 +74,6 @@ export async function POST(req: NextRequest) {
   return NextResponse.json(data);
 }
 
-
 // PUT: update a blocked time (admin only)
 export async function PUT(req: NextRequest) {
   const session = await auth0.getSession();

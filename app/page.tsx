@@ -1,35 +1,21 @@
-// app/admin/page.tsx
-import { supabase } from '@/lib/supabase';
+'use client';
+import { useState } from 'react';
+import BarberProfile from '@/components/BarberProfile';
+import ServiceList from '@/components/ServiceList';
+import BookingCalendar from '@/components/BookingCalendar';
+import { Box } from '@mui/material';
 
-export default async function Home() {
-
-  const { data: appointments, error } = await supabase
-    .from('appointments')
-    .select('*')
-    .order('date', { ascending: true });
-
-  if (error) {
-    throw new Error('Failed to fetch appointments');
-  }
+export default function BookingPage() {
+  const [selectedService, setSelectedService] = useState(null);
 
   return (
-    <main className="max-w-3xl mx-auto p-6">
-      <h1 className="text-xl font-bold mb-4">All Appointments - User Page</h1>
-
-      <ul className="space-y-3">
-        {appointments.map((appt) => (
-          <li
-            key={appt.id}
-            className="border border-gray-200 p-4 rounded shadow-sm"
-          >
-            <div className="font-semibold">{appt.name}</div>
-            <div>{appt.service}</div>
-            <div>
-              {appt.date} @ {appt.time}
-            </div>
-          </li>
-        ))}
-      </ul>
-    </main>
+    <Box py={4} sx={{backgroundColor:'white'}}>
+      <BarberProfile />
+      {!selectedService ? (
+        <ServiceList onSelect={setSelectedService} />
+      ) : (
+        <BookingCalendar selectedService={selectedService} />
+      )}
+    </Box>
   );
 }
