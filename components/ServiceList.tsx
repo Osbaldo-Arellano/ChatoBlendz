@@ -10,6 +10,9 @@ import {
   IconButton,
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import Grid from '@mui/material/Grid';
+
 
 const services = [
   { id: 1, name: "Standard Haircut", description: "World-class cut", price: 100, duration: "1h" },
@@ -27,11 +30,11 @@ export default function ServiceList({ onSelect }: { onSelect: (service: any) => 
         justifyContent="space-between"
         alignItems="center"
         onClick={() => setOpen(!open)}
-        sx={{ cursor: 'pointer', mb: 1 }}
+        sx={{ cursor: 'pointer', mb: 1, ml:1 }}
       >
         <Box>
-          <Typography variant="h5" fontWeight="bold" color="text.secondary">Services</Typography>
-          <Typography variant="subtitle1" fontWeight="medium" color="text.secondary">Tap In!</Typography>
+          <Typography variant="h6" fontWeight="bold" color="text.secondary">Services</Typography>
+          <Typography variant="subtitle2" fontWeight="medium" color="text.secondary">Tap In!</Typography>
         </Box>
         <IconButton size="small">
           <ExpandMoreIcon
@@ -48,12 +51,45 @@ export default function ServiceList({ onSelect }: { onSelect: (service: any) => 
         <Box mt={2}>
           {services.map(service => (
             <Card key={service.id} sx={{ borderRadius: 0, borderBottom: '1px dashed #ccc' }}>
-              <CardContent>
-                <Typography variant="h6">{service.name}</Typography>
-                <Typography variant="body2">{service.description}</Typography>
-                <Typography variant="body2">${service.price} • {service.duration}</Typography>
-                <Button onClick={() => onSelect(service)} sx={{ mt: 1 }}>Book</Button>
-              </CardContent>
+                <CardContent sx={{ py: 2 }}>
+                <Grid container spacing={2} alignItems="center">
+                    {/* Left: Service name & description */}
+                    <Grid size={{ xs: 9, sm: 9 }}>
+                    <Typography fontWeight="bold">{service.name}</Typography>
+                    <Typography variant="body2" color="text.secondary" noWrap>
+                        {service.description}
+                    </Typography>
+                    </Grid>
+
+                    {/* Right: Price + duration + Book */}
+                    <Grid size={{ xs: 1, sm: 1 }}>
+                    <Box
+                        display="flex"
+                        justifyContent={{ xs: 'flex-start', sm: 'flex-end' }}
+                        alignItems="center"
+                        gap={1}
+                        flexWrap="wrap"
+                    >
+                        <Box>
+                        <Typography fontWeight="bold">${service.price.toFixed(2)}</Typography>
+                        <Typography variant="caption" color="text.secondary">
+                            {service.duration}
+                        </Typography>
+                        </Box>
+                        
+                        <Button
+                        size="small"
+                        variant="contained"
+                        onClick={() => onSelect(service)}
+                        sx={{ textTransform: 'none' }}
+                        >
+                        Book
+                        </Button>
+                    </Box>
+                    </Grid>
+                </Grid>
+                </CardContent>
+
             </Card>
           ))}
         </Box>

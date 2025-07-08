@@ -9,7 +9,7 @@ export default function BookingPage() {
   const [selectedService, setSelectedService] = useState(null);
 
   return (
-    <Box py={4} sx={{backgroundColor:'white'}}>
+    <Box sx={{backgroundColor:'white'}}>
       <BarberProfile />
       {!selectedService ? (
         <ServiceList onSelect={setSelectedService} />
