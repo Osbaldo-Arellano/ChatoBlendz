@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Slider from 'react-slick';
 import {
   Box,
@@ -14,19 +14,53 @@ import PhoneIcon from '@mui/icons-material/Phone';
 import InstagramIcon from '@mui/icons-material/Instagram';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import client  from '@/lib/sanityClient'; 
+import Image from 'next/image';
 
-// Images
-const galleryImages = [
+const fallbackGalleryImages = [
   '/images/haircut1.jpg',
   '/images/haircut2.jpg',
   '/images/haircut3.jpg',
-  '/images/haircut2.jpg',
-  '/images/haircut1.jpg',
 ];
 
 export default function BarberProfile() {
     const [snackbarOpen, setSnackbarOpen] = useState(false);
     const [sliderRef, setSliderRef] = useState<any>(null);
+    const [galleryImages, setGalleryImages] = useState<any[]>([]);
+
+    useEffect(() => {
+      async function fetchGallery() {
+        try {
+          const data = await client.fetch(`
+            *[_type == "gallery"] {
+              images[]{ asset->{ url } }
+            }
+          `);
+
+          const urls = Array.from(
+            new Set(
+              data
+                .flatMap((gallery: any) => gallery.images || [])
+                .map((img: any) => img.asset?.url)
+                .filter(Boolean)
+            )
+          );
+
+          if (urls.length === 0) {
+            console.warn('Sanity returned no gallery images. Using fallback.');
+            setGalleryImages(fallbackGalleryImages);
+          } else {
+            setGalleryImages(urls);
+          }
+        } catch (err) {
+          console.error('Sanity fetch failed. Using fallback gallery.', err);
+          setGalleryImages(fallbackGalleryImages);
+        }
+      }
+
+      fetchGallery();
+    }, []);
+
 
     const handleShare = async () => {
     try {
@@ -88,86 +122,108 @@ export default function BarberProfile() {
 
 
   return (
-    <Box sx={{ backgroundColor: 'white', maxWidth: 600, mx: 'auto', pb: 2 }}>
-      {/* Gallery with Overlays */}
-      <Box sx={{ position: 'relative' }}>
-        <Slider {...sliderSettings} ref={(slider) => setSliderRef(slider)}>
-          {galleryImages.map((img, idx) => (
+<Box
+  sx={{
+    background: 'linear-gradient(to bottom, #ffffff, #f9f9f9)',
+    maxWidth: 600,
+    mx: 'auto',
+    pb: 2,
+  }}
+>
+    {/* Gallery with Overlays */}
+    <Box sx={{ position: 'relative' }}>
+    <Slider {...sliderSettings} ref={(slider) => setSliderRef(slider)}>
+        {galleryImages.length === 0 ? (
+        <Box
+            sx={{
+            height: 260,
+            backgroundColor: '#eee',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            }}
+        >
+            <Typography color="text.secondary">No images found.</Typography>
+        </Box>
+        ) : (
+        galleryImages.map((img, idx) => (
             <Box
-              key={idx}
-              sx={{
+            key={idx}
+            sx={{
                 height: 260,
                 backgroundImage: `url(${img})`,
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
-              }}
-            />
-          ))}
-        </Slider>
-
-        {/* Arrows overlayed */}
-        <IconButton
-          onClick={() => sliderRef?.slickPrev()}
-          sx={{
-            position: 'absolute',
-            left: 8,
-            top: '50%',
-            transform: 'translateY(-50%)',
-            backgroundColor: 'white',
-            width: 32,
-            height: 32,
-            zIndex: 2,
-          }}
-        >
-          <ArrowBackIosNewIcon fontSize="small" />
-        </IconButton>
-
-        <IconButton
-          onClick={() => sliderRef?.slickNext()}
-          sx={{
-            position: 'absolute',
-            right: 8,
-            top: '50%',
-            transform: 'translateY(-50%)',
-            backgroundColor: 'white',
-            width: 32,
-            height: 32,
-            zIndex: 2,
-          }}
-        >
-          <ArrowForwardIosIcon fontSize="small" />
-        </IconButton>
-
-        {/* Instagram button top-right */}
-        <Box
-          sx={{
-            position: 'absolute',
-            top: 16,
-            right: 16,
-            backgroundColor: 'rgba(0, 0, 0, 0.7)',
-            borderRadius: '50%',
-            width: 40,
-            height: 40,
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            zIndex: 3,
-          }}
-        >
-          <IconButton
-            aria-label="Instagram"
-            href="https://www.instagram.com/chatoblndz_/"
-            target="_blank"
-            rel="noopener noreferrer"
-            sx={{
-              color: 'white',
-              p: 0.5,
             }}
-          >
-            <InstagramIcon fontSize="medium" />
-          </IconButton>
-        </Box>
-      </Box>
+            />
+        ))
+        )}
+    </Slider>
+
+    {/* Arrows overlayed */}
+    <IconButton
+        onClick={() => sliderRef?.slickPrev()}
+        sx={{
+        position: 'absolute',
+        left: 8,
+        top: '50%',
+        transform: 'translateY(-50%)',
+        backgroundColor: 'white',
+        width: 32,
+        height: 32,
+        zIndex: 2,
+        }}
+    >
+        <ArrowBackIosNewIcon fontSize="small" />
+    </IconButton>
+
+    <IconButton
+        onClick={() => sliderRef?.slickNext()}
+        sx={{
+        position: 'absolute',
+        right: 8,
+        top: '50%',
+        transform: 'translateY(-50%)',
+        backgroundColor: 'white',
+        width: 32,
+        height: 32,
+        zIndex: 2,
+        }}
+    >
+        <ArrowForwardIosIcon fontSize="small" />
+    </IconButton>
+
+    {/* Instagram button top-right */}
+    <Box
+        sx={{
+        position: 'absolute',
+        top: 16,
+        right: 16,
+        backgroundColor: 'rgba(0, 0, 0, 0.7)',
+        borderRadius: '50%',
+        width: 40,
+        height: 40,
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        zIndex: 3,
+        }}
+    >
+        <IconButton
+        aria-label="Instagram"
+        href="https://www.instagram.com/chatoblndz_/"
+        target="_blank"
+        rel="noopener noreferrer"
+        sx={{
+            color: 'white',
+            p: 0.5,
+        }}
+        >
+        <InstagramIcon fontSize="medium" />
+        </IconButton>
+    </Box>
+    </Box>
+
 
       {/* Details Section */}
       <Box px={2} pt={2}>
@@ -176,13 +232,21 @@ export default function BarberProfile() {
           size="small"
           sx={{ mb: 1, backgroundColor: '#f1f1f1', fontWeight: '500' }}
         />
+        <Box sx={{ display: 'flex', justifyContent: 'center'}}>
+            <Image
+              src="/images/client.png"
+              alt="Client Logo"
+              width={125}
+              height={125}
+            />
+          </Box>
 
-        <Box display="flex" justifyContent="space-between" alignItems="center">
-          <Typography variant="h5" fontWeight="bold" color="text.primary">
-            ChatoBlendz
-          </Typography>
+        <Box display="flex" justifyContent="right" alignItems="right">
+          <Box display="flex" alignItems="right" gap={1}>
+          <Typography color="text.secondary" fontSize="14px">
+          Serving the Salem, Woodburn, and Portland area.
+        </Typography>
 
-          <Box display="flex" alignItems="center" gap={1}>
             <Tooltip title="Share this page">
               <IconButton
                 aria-label="Share"
@@ -202,14 +266,9 @@ export default function BarberProfile() {
               </IconButton>
             </Tooltip>
           </Box>
+          
         </Box>
-
-        <Typography color="text.secondary" fontSize="14px">
-          Serving the Salem, Woodburn, and Portland area.
-        </Typography>
-        <Typography fontSize="14px" color="text.secondary" mt={0.5}>
-          Professional Barber
-        </Typography>
+        
       </Box>
 
       <Snackbar

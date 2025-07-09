@@ -3,19 +3,33 @@ import { useState } from 'react';
 import BarberProfile from '@/components/BarberProfile';
 import ServiceList from '@/components/ServiceList';
 import BookingCalendar from '@/components/BookingCalendar';
+import Footer from '@/components/Footer';
 import { Box } from '@mui/material';
 
 export default function BookingPage() {
   const [selectedService, setSelectedService] = useState(null);
 
   return (
-    <Box sx={{backgroundColor:'white'}}>
-      <BarberProfile />
-      {!selectedService ? (
-        <ServiceList onSelect={setSelectedService} />
-      ) : (
-        <BookingCalendar selectedService={selectedService} />
-      )}
+    <Box
+      sx={{
+        minHeight: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
+        backgroundColor: 'white',
+      }}
+    >
+      {/* Main content that grows to fill space */}
+      <Box sx={{ flex: 1 }}>
+        <BarberProfile />
+        {!selectedService ? (
+          <ServiceList onSelect={setSelectedService} />
+        ) : (
+          <BookingCalendar selectedService={selectedService} />
+        )}
+      </Box>
+
+      {/* Sticky Footer */}
+      <Footer />
     </Box>
   );
 }
