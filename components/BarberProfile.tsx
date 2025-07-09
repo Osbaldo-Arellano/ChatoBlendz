@@ -232,15 +232,31 @@ export default function BarberProfile() {
           size="small"
           sx={{ mb: 1, backgroundColor: '#f1f1f1', fontWeight: '500' }}
         />
-        <Box sx={{ display: 'flex', justifyContent: 'center'}}>
-            <Image
-              src="/images/client.png"
-              alt="Client Logo"
-              width={125}
-              height={125}
-            />
-          </Box>
-
+        <Chip
+          label="Fades"
+          size="small"
+          sx={{ mb: 1, backgroundColor: '#f1f1f1', fontWeight: '500' }}
+        />
+        <Chip
+          label="Tapers"
+          size="small"
+          sx={{ mb: 1, backgroundColor: '#f1f1f1', fontWeight: '500' }}
+        />
+        <Chip
+          label="Shears"
+          size="small"
+          sx={{ mb: 1, backgroundColor: '#f1f1f1', fontWeight: '500' }}
+        />
+        <Chip
+          label="Face Tune Up"
+          size="small"
+          sx={{ mb: 1, backgroundColor: '#f1f1f1', fontWeight: '500' }}
+        />
+        <Chip
+          label="Beards"
+          size="small"
+          sx={{ mb: 1, backgroundColor: '#f1f1f1', fontWeight: '500' }}
+        />
         <Box display="flex" justifyContent="right" alignItems="right">
           <Box display="flex" alignItems="right" gap={1}>
           <Typography color="text.secondary" fontSize="14px">

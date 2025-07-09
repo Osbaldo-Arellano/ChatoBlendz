@@ -5,6 +5,8 @@ import ServiceList from '@/components/ServiceList';
 import BookingCalendar from '@/components/BookingCalendar';
 import Footer from '@/components/Footer';
 import { Box } from '@mui/material';
+import Image from 'next/image';
+
 
 export default function BookingPage() {
   const [selectedService, setSelectedService] = useState(null);
@@ -20,6 +22,18 @@ export default function BookingPage() {
     >
       {/* Main content that grows to fill space */}
       <Box sx={{ flex: 1 }}>
+      {/* Details Section */}
+      <Box px={2} pt={2} sx={{background: 'linear-gradient(to bottom, #ffffff, #f9f9f9)'}}>
+        <Box sx={{ display: 'flex', justifyContent: 'center'}}>
+            <Image
+              src="/images/client.png"
+              alt="Client Logo"
+              width={125}
+              height={125}
+            />
+        </Box>
+        
+      </Box>
         <BarberProfile />
         {!selectedService ? (
           <ServiceList onSelect={setSelectedService} />
