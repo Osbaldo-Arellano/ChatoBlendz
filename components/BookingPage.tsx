@@ -9,6 +9,7 @@ import Footer from '@/components/Footer';
 import SectionNav from '@/components/SectionNav';
 import HighlightList from '@/components/HighlightList';
 import Disclaimers from '@/components/Disclaimer';
+import Portfolio from './Portfolio';
 
 const validTabs = ['Services', 'Details', 'Reviews', 'Portfolio'];
 
@@ -46,7 +47,7 @@ export default function BookingPage() {
           <BookingCalendar selectedService={selectedService} />
         );
       case 'Portfolio':
-        return <div style={{ padding: '1rem' }}>Portfolio details go here.</div>;
+        return <Portfolio />
       case 'Contact':
         return <div style={{ padding: '1rem' }}>Contact info here</div>;
       case 'Socials':
