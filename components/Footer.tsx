@@ -15,7 +15,7 @@ export default function Footer() {
         px: 2,
         mt: 4,
         textAlign: 'center',
-        maxWidth: 600,
+        maxWidth: "100%",
         mx: 'auto',
       }}
     >
