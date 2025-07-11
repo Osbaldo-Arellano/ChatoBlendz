@@ -119,17 +119,16 @@ export default function BarberProfile() {
         />
     ),
     };
-
-
   return (
-<Box
-  sx={{
-    background: 'linear-gradient(to bottom, #ffffff, #f9f9f9)',
-    maxWidth: 600,
-    mx: 'auto',
-    pb: 2,
-  }}
->
+  <Box
+    sx={{
+      background: 'linear-gradient(to bottom,rgb(151, 151, 151),rgb(255, 255, 255))',
+      maxWidth: 600,
+      mx: 'auto',
+      pb: 2,
+      mb: 2
+    }}
+  >
     {/* Gallery with Overlays */}
     <Box sx={{ position: 'relative' }}>
     <Slider {...sliderSettings} ref={(slider) => setSliderRef(slider)}>
@@ -259,6 +258,17 @@ export default function BarberProfile() {
         />
         <Box display="flex" justifyContent="right" alignItems="right">
           <Box display="flex" alignItems="right" gap={1}>
+            {/* Details Section */}
+            <Box sx={{background: 'linear-gradient(to bottom, #ffffff, #f9f9f9)',  borderRadius: 10}}>
+              <Box sx={{ display: 'flex', justifyContent: 'center'}}>
+                  <Image
+                    src="/images/client.png"
+                    alt="Client Logo"
+                    width={125}
+                    height={125}
+                  />
+              </Box>
+            </Box>
           <Typography color="text.secondary" fontSize="14px">
           Serving the Salem, Woodburn, and Portland area.
         </Typography>
