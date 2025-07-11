@@ -105,7 +105,7 @@ export default function ServiceList({ onSelect }: { onSelect: (service: any) => 
         justifyContent="space-between"
         alignItems="center"
         onClick={() => setOpen(!open)}
-        sx={{ cursor: 'pointer', mb: 1, ml: 1 }}
+        sx={{ cursor: 'pointer', mb: 1, ml: 1, mt: 3  }}
       >
         <Box>
           <Typography variant="h6" fontWeight="bold" color="text.secondary">Services</Typography>

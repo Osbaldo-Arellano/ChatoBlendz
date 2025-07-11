@@ -259,7 +259,7 @@ export default function BarberProfile() {
         <Box display="flex" justifyContent="right" alignItems="right">
           <Box display="flex" alignItems="right" gap={1}>
             {/* Details Section */}
-            <Box sx={{background: 'linear-gradient(to bottom, #ffffff, #f9f9f9)',  borderRadius: 10}}>
+            <Box>
               <Box sx={{ display: 'flex', justifyContent: 'center'}}>
                   <Image
                     src="/images/client.png"

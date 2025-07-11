@@ -2,7 +2,7 @@
 
 import { Box, Button } from '@mui/material';
 
-const tabs = ['Services', 'Portfolio', 'Contact', 'Socials'];
+const tabs = ['Services', 'Portfolio', 'Contact', 'Availability'];
 
 export default function SectionNav({
   active,

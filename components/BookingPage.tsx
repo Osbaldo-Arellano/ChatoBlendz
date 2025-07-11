@@ -10,6 +10,8 @@ import SectionNav from '@/components/SectionNav';
 import HighlightList from '@/components/HighlightList';
 import Disclaimers from '@/components/Disclaimer';
 import Portfolio from './Portfolio';
+import ContactCard from './ContactCard';
+import AvailabilityCard from './Availability';
 
 const validTabs = ['Services', 'Details', 'Reviews', 'Portfolio'];
 
@@ -49,9 +51,9 @@ export default function BookingPage() {
       case 'Portfolio':
         return <Portfolio />
       case 'Contact':
-        return <div style={{ padding: '1rem' }}>Contact info here</div>;
-      case 'Socials':
-        return <div style={{ padding: '1rem' }}>Social media pages</div>;
+        return <ContactCard />
+      case 'Availability':
+        return <AvailabilityCard />
       default:
         return null;
     }
