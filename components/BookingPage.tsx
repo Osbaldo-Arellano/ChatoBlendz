@@ -1,10 +1,11 @@
 'use client';
+
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Box } from '@mui/material';
 import BarberProfile from '@/components/BarberProfile';
 import ServiceList from '@/components/ServiceList';
-import BookingCalendar from '@/components/BookingCalendar';
+import BookingCalendarModal from '@/components/BookingCalendar';
 import Footer from '@/components/Footer';
 import SectionNav from '@/components/SectionNav';
 import HighlightList from '@/components/HighlightList';
@@ -15,6 +16,16 @@ import AvailabilityCard from './Availability';
 
 const validTabs = ['Services', 'Details', 'Reviews', 'Portfolio'];
 
+function parseDurationToMinutes(durationStr: string): number {
+  if (!durationStr) return 0;
+  const normalized = durationStr.toLowerCase().replace(/\s+/g, ' ').trim();
+  const hrMatch = normalized.match(/(\d+)\s*hr/);
+  const minMatch = normalized.match(/(\d+)\s*min/);
+  const hours = hrMatch ? parseInt(hrMatch[1], 10) : 0;
+  const minutes = minMatch ? parseInt(minMatch[1], 10) : 0;
+  return hours * 60 + minutes;
+}
+
 export default function BookingPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -24,36 +35,58 @@ export default function BookingPage() {
   const initialTab = validTabs.includes(urlTab || '') ? urlTab! : defaultTab;
 
   const [activeTab, setActiveTab] = useState(initialTab);
-  const [selectedService, setSelectedService] = useState(null);
+  const [selectedService, setSelectedService] = useState<{
+    name: string;
+    price: number;
+    duration: number;
+    parsedDuration: number;
+  } | null>(null);
+  const [calendarOpen, setCalendarOpen] = useState(false);
 
   useEffect(() => {
-    // Sync state with URL param
     if (urlTab !== activeTab) {
       const params = new URLSearchParams(searchParams.toString());
       params.set('tab', activeTab);
       router.replace(`?${params.toString()}`, { scroll: false });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTab]);
 
   const renderTabContent = () => {
     switch (activeTab) {
       case 'Services':
-        return !selectedService ? (
-            <>
-            <ServiceList onSelect={setSelectedService} />
-            <HighlightList onSelect={setSelectedService}/>
+        return (
+          <>
+            <ServiceList
+              onSelect={(s) => {
+                setSelectedService({
+                  name: s.name,
+                  price: s.price,
+                  duration: parseDurationToMinutes(s.duration),
+                  parsedDuration: s.parsedDuration
+                });
+                setCalendarOpen(true);
+              }}
+            />
+            <HighlightList
+              onSelect={(s) => {
+                setSelectedService({
+                  name: s.name,
+                  price: s.price,
+                  duration: parseDurationToMinutes(s.duration),
+                  parsedDuration: s.parsedDuration
+                });
+                setCalendarOpen(true);
+              }}
+            />
             <Disclaimers />
-            </>
-        ) : (
-          <BookingCalendar selectedService={selectedService} />
+          </>
         );
       case 'Portfolio':
-        return <Portfolio />
+        return <Portfolio />;
       case 'Contact':
-        return <ContactCard />
+        return <ContactCard />;
       case 'Availability':
-        return <AvailabilityCard />
+        return <AvailabilityCard />;
       default:
         return null;
     }
@@ -65,6 +98,14 @@ export default function BookingPage() {
         <BarberProfile />
         <SectionNav active={activeTab} onChange={setActiveTab} />
         {renderTabContent()}
+        <BookingCalendarModal
+          open={calendarOpen}
+          onClose={() => {
+            setCalendarOpen(false);
+            setSelectedService(null);
+          }}
+          selectedService={selectedService}
+        />
       </Box>
       <Footer />
     </Box>
