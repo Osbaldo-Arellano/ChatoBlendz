@@ -18,6 +18,7 @@ import dayjs, { Dayjs } from 'dayjs';
 import { useEffect, useRef, useState } from 'react';
 import AdditionalServicesModal from '@/components/AddtionalServices';
 import BookingConfirmation from './BookingConfirmation';
+import ClientInfo from './ClientInfo';
 
 interface BookingCalendarModalProps {
   open: boolean;
@@ -68,6 +69,14 @@ export default function BookingCalendarModal({
   const [selectedAddons, setSelectedAddons] = useState<AdditionalService[]>([]);
   const [confirmationOpen, setConfirmationOpen] = useState(false);
   const [confirmedService, setConfirmedService] = useState<typeof selectedService>(null);
+  const [clientModalOpen, setClientModalOpen] = useState(false);
+  const [finalConfirmationOpen, setFinalConfirmationOpen] = useState(false);
+  const [clientInfo, setClientInfo] = useState<{
+    name: string;
+    phone: string;
+    smsReminder: boolean;
+  } | null>(null);
+
 
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -93,7 +102,7 @@ export default function BookingCalendarModal({
   const handleContinue = () => {
     setConfirmedService(selectedService); // Save it before closing
     onClose(); // this triggers parent clear
-    setConfirmationOpen(true); // show confirmation modal
+    setClientModalOpen(true);
   };
 
   const totalPrice =
@@ -112,7 +121,7 @@ export default function BookingCalendarModal({
             pt: 3,
           }}
         >
-          <Typography variant="h6">{selectedDay.format('MMMM YYYY')}</Typography>
+          <Typography>{selectedDay.format('MMMM YYYY')}</Typography>
           <IconButton onClick={onClose}>
             <CloseIcon />
           </IconButton>
@@ -218,14 +227,14 @@ export default function BookingCalendarModal({
                   const end = start.add(duration, 'minute');
 
                   return (
-                    <Box>
-                      <Typography color="text.secondary">
+                  <Box>
+                    <Typography color="text.secondary">
                       {start.format('h:mm A')} – {end.format('h:mm A')}
-                        <Typography fontWeight="bold">
-                          {selectedDay.format('ddd, D MMMM')}
-                        </Typography>
-                    </Typography>            
-                    </Box>                        
+                    </Typography>
+                    <Typography fontWeight="bold">
+                      {selectedDay.format('ddd, D MMMM')}
+                    </Typography>
+                  </Box>   
                   );
                 })()}
               <Box mt={2} display="flex" alignItems="center" gap={1}>
@@ -306,14 +315,28 @@ export default function BookingCalendarModal({
         onSelect={(addons) => setSelectedAddons(addons)}
       />
 
-      <BookingConfirmation
-        open={confirmationOpen}
-        onClose={() => setConfirmationOpen(false)}
-        selectedService={confirmedService} 
-        selectedDay={selectedDay.format('YYYY-MM-DD')}
-        selectedTime={selectedTime}
-        selectedAddons={selectedAddons}
+      <ClientInfo
+        open={clientModalOpen}
+        onClose={() => setClientModalOpen(false)}
+        selectedService={confirmedService}
+        onSubmit={(info) => {
+          setClientInfo(info);
+          setClientModalOpen(false); 
+          setFinalConfirmationOpen(true);
+        }}
       />
+
+      {clientInfo && (
+        <BookingConfirmation
+          open={finalConfirmationOpen}
+          onClose={() => setFinalConfirmationOpen(false)}
+          selectedService={confirmedService}
+          selectedDay={selectedDay.format('YYYY-MM-DD')}
+          selectedTime={selectedTime}
+          selectedAddons={selectedAddons}
+          clientInfo={clientInfo}
+        />
+      )}
     </>
   );
 

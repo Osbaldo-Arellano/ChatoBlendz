@@ -256,6 +256,11 @@ export default function BarberProfile() {
           size="small"
           sx={{ mb: 1, backgroundColor: '#f1f1f1', fontWeight: '500' }}
         />
+        <Chip
+          label="Hair Enhancements"
+          size="small"
+          sx={{ mb: 1, backgroundColor: '#f1f1f1', fontWeight: '500' }}
+        />
         <Box display="flex" justifyContent="right" alignItems="right">
           <Box display="flex" alignItems="right" gap={1}>
             {/* Details Section */}

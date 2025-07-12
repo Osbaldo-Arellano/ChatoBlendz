@@ -26,7 +26,13 @@ interface BookingConfirmationModalProps {
   selectedDay: string;
   selectedTime: string;
   selectedAddons: { name: string; price: number }[];
+  clientInfo: {
+    name: string;
+    phone: string;
+    smsReminder: boolean;
+  };
 }
+
 
 export default function BookingConfirmationModal({
   open,
@@ -35,6 +41,7 @@ export default function BookingConfirmationModal({
   selectedDay,
   selectedTime,
   selectedAddons,
+  clientInfo,
 }: BookingConfirmationModalProps) {
   const dateObj = dayjs(`${selectedDay} ${selectedTime}`, 'YYYY-MM-DD h:mm A');
   const start = dateObj;
@@ -45,18 +52,28 @@ export default function BookingConfirmationModal({
     selectedAddons.reduce((sum, addon) => sum + addon.price, 0);
 
   return (
-    <Dialog open={open} onClose={onClose} fullWidth>
-      <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Typography variant="h6">Booking Confirmation</Typography>
+    <Dialog open={open} onClose={onClose} fullScreen>
+      <DialogTitle
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          px: 3,
+          pt: 3,
+          WebkitJustifyContent:'right'
+        }}
+      >
         <IconButton onClick={onClose}>
           <CloseIcon />
         </IconButton>
       </DialogTitle>
 
       <DialogContent dividers>
-        <Box mb={2}>
+        <Typography variant="h6" fontWeight="bold" color="text.secondary">
+            Appointment Confirmation
+          </Typography>
+        <Box mb={2} mt={2}>
           <Typography variant="subtitle2" color="text.secondary">
-            Appointment
+            Date
           </Typography>
           <Typography fontWeight="bold">
             {start.format('dddd, MMM D')} at {start.format('h:mm A')}
@@ -88,6 +105,18 @@ export default function BookingConfirmationModal({
           <Avatar sx={{ width: 24, height: 24 }}>M</Avatar>
           <Typography variant="body2">Mario Bonilla</Typography>
         </Box>
+
+        <Box mb={2}>
+        <Typography variant="subtitle2" color="text.secondary">
+            Client Info
+        </Typography>
+        <Typography>{clientInfo.name}</Typography>
+        <Typography>{clientInfo.phone}</Typography>
+        <Typography color="text.secondary">
+            SMS Reminders: {clientInfo.smsReminder ? 'Yes' : 'No'}
+        </Typography>
+        </Box>
+
 
         <Box mt={3}>
           <Typography variant="subtitle2">Total: ${totalPrice.toFixed(2)}</Typography>
