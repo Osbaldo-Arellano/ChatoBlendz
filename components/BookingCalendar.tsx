@@ -17,6 +17,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import dayjs, { Dayjs } from 'dayjs';
 import { useEffect, useRef, useState } from 'react';
 import AdditionalServicesModal from '@/components/AddtionalServices';
+import BookingConfirmation from './BookingConfirmation';
 
 interface BookingCalendarModalProps {
   open: boolean;
@@ -65,6 +66,8 @@ export default function BookingCalendarModal({
   const [selectedTime, setSelectedTime] = useState('');
   const [addonsModalOpen, setAddonsModalOpen] = useState(false);
   const [selectedAddons, setSelectedAddons] = useState<AdditionalService[]>([]);
+  const [confirmationOpen, setConfirmationOpen] = useState(false);
+  const [confirmedService, setConfirmedService] = useState<typeof selectedService>(null);
 
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -88,7 +91,9 @@ export default function BookingCalendarModal({
   }, [days, selectedDay]);
 
   const handleContinue = () => {
-    onClose();
+    setConfirmedService(selectedService); // Save it before closing
+    onClose(); // this triggers parent clear
+    setConfirmationOpen(true); // show confirmation modal
   };
 
   const totalPrice =
@@ -299,6 +304,15 @@ export default function BookingCalendarModal({
         onClose={() => setAddonsModalOpen(false)}
         selected={selectedAddons}
         onSelect={(addons) => setSelectedAddons(addons)}
+      />
+
+      <BookingConfirmation
+        open={confirmationOpen}
+        onClose={() => setConfirmationOpen(false)}
+        selectedService={confirmedService} 
+        selectedDay={selectedDay.format('YYYY-MM-DD')}
+        selectedTime={selectedTime}
+        selectedAddons={selectedAddons}
       />
     </>
   );
