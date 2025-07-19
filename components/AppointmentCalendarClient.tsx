@@ -123,7 +123,6 @@ useEffect(() => {
 
   async function handleBlockUpdate(updated: BlockedTime) {
 
-    console.log(updated)
     const res = await fetch('/api/admin/blocked-times', {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
@@ -132,7 +131,6 @@ useEffect(() => {
 
     if (res.ok) {
       const updatedBlock = await res.json();
-      console.log('✅ Updated block:', updatedBlock);
 
       setBlockedTimes((prev) =>
         prev.map((b) =>

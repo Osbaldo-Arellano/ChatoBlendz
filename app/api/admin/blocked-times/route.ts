@@ -64,8 +64,6 @@ export async function POST(req: NextRequest) {
 
 // PUT: update a blocked time (admin only)
 export async function PUT(req: NextRequest) {
-    // console.log(req.body);
-
   const session = await auth0.getSession();
   if (!session) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -73,8 +71,6 @@ export async function PUT(req: NextRequest) {
 
   const body = await req.json();
   const { id, date, start_time, end_time, reason } = body;
-
-  console.log(id, date, start_time, end_time, reason)
 
   if (!id || !start_time || !end_time || !date) {
     return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });

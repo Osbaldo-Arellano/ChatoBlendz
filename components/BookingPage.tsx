@@ -106,7 +106,6 @@ export default function BookingPage() {
             weekends
           }
         `);
-            console.log("HEREEEEEEEEEEE" + data)
         setAvailability(data);
       } catch (error) {
         console.error('Failed to fetch availability:', error);

@@ -104,10 +104,6 @@ export default function BookingCalendarModal({
   const [blockedTimes, setBlockedTimes] = useState<string[]>([]);
   const [loadingSlots, setLoadingSlots] = useState(false);
 
-if (availability) {
-  console.log("LOADED")
-  console.log("HEREEE!!!", availability.weekdays.start)
-}
   const scrollRef = useRef<HTMLDivElement>(null);
 
   const handleScroll = () => {
@@ -186,8 +182,6 @@ async function fetchSchedule(date: string) {
     }
 
     const { appointments, blockedTimes } = await res.json();
-    console.log('Fetched Appointments:', appointments);
-    console.log('Fetched Blocked Times:', blockedTimes);
 
     setAppointments(appointments.map((a: { time: string }) => a.time));
     
