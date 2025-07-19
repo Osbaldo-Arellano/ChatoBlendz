@@ -21,7 +21,7 @@ import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 
 const fallbackServices = [
   {
-    name: "Fade",
+    name: "Fade!",
     description: "A crispy fade will have you ready for any occasion.",
     price: 25,
     duration: "1hr",
@@ -178,10 +178,23 @@ export default function ServiceList({ onSelect }: { onSelect: (service: any) => 
                           size="small"
                           variant="contained"
                           onClick={() => onSelect(service)}
-                          sx={{ textTransform: 'none' }}
+                          sx={{
+                            backgroundColor: 'black',
+                            color: 'white',
+                            fontWeight: 'bold',
+                            textTransform: 'none',
+                            '&:hover': {
+                              backgroundColor: '#222',
+                            },
+                            '&:disabled': {
+                              backgroundColor: '#555',
+                              color: 'white',
+                            },
+                          }}
                         >
                           Book
                         </Button>
+
                       </Box>
                     </Grid>
                   </Grid>

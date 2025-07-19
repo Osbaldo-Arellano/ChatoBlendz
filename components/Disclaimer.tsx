@@ -14,8 +14,8 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 const disclaimers = [
   'Please arrive 5 minutes early.',
-  'No-shows may result in a 50% charge.',
   'Cancellations must be made at least 4 hours in advance.',
+  'Please approve text messages so that you don\'t miss an appointment.'
 ];
 
 export default function Disclaimers() {

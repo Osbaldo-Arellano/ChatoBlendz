@@ -11,12 +11,11 @@ import { BlockedTime } from './AppointmentCalendarClient';
 type Props = {
   open: boolean;
   onClose: () => void;
-  onSave: (updated: BlockedTime) => void;
+  onSave: (newOrUpdated: BlockedTime) => void;
   block: BlockedTime | null;
 };
 
 export default function BlockedTimeDialog({ open, onClose, onSave, block }: Props) {
-    console.log("LOADED!!!!!!!!!!!!!!!!!");
   const [date, setDate] = useState<Date | null>(null);
   const [startTime, setStartTime] = useState<Date | null>(null);
   const [endTime, setEndTime] = useState<Date | null>(null);
@@ -25,19 +24,25 @@ export default function BlockedTimeDialog({ open, onClose, onSave, block }: Prop
   useEffect(() => {
     if (block) {
       const dateObj = new Date(block.date);
+
       const [startH, startM] = block.start_time.split(':').map(Number);
       const [endH, endM] = block.end_time.split(':').map(Number);
 
       const start = new Date(dateObj);
-      start.setHours(startH, startM);
+      start.setHours(startH, startM, 0, 0);
 
       const end = new Date(dateObj);
-      end.setHours(endH, endM);
+      end.setHours(endH, endM, 0, 0);
 
       setDate(dateObj);
       setStartTime(start);
       setEndTime(end);
       setReason(block.reason || '');
+    } else {
+      setDate(null);
+      setStartTime(null);
+      setEndTime(null);
+      setReason('');
     }
   }, [block]);
 
@@ -49,7 +54,7 @@ export default function BlockedTimeDialog({ open, onClose, onSave, block }: Prop
     const endStr = endTime.toTimeString().slice(0, 5);
 
     onSave({
-      ...block,
+      ...block,  
       date: dateStr,
       start_time: startStr,
       end_time: endStr,
@@ -61,7 +66,7 @@ export default function BlockedTimeDialog({ open, onClose, onSave, block }: Prop
 
   return (
     <Dialog open={open} onClose={onClose}>
-      <DialogTitle>Edit Blocked Time</DialogTitle>
+      <DialogTitle>{block ? 'Edit Blocked Time' : 'New Blocked Time'}</DialogTitle>
       <DialogContent>
         <Stack spacing={2} sx={{ mt: 1 }}>
           <DatePicker

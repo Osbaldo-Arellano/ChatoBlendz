@@ -32,81 +32,80 @@ export async function POST(req: NextRequest) {
 
   const body = await req.json();
   const {
-    repeatDays,   // e.g., [0, 2, 4]
-    startTime,    // "09:00"
-    endTime,      // "17:00"
-    reason,       // optional
-    startDate     // new: "2025-07-10"
+    startDate,   // required, e.g. "2025-07-10"
+    startTime,   // required, e.g. "13:00"
+    endTime,     // required, e.g. "14:00"
+    reason       // optional
   } = body;
 
-  if (!repeatDays || !Array.isArray(repeatDays) || repeatDays.length === 0 || !startTime || !endTime || !startDate) {
+  if (!startDate || !startTime || !endTime) {
     return NextResponse.json({ error: 'Missing required fields.' }, { status: 400 });
   }
 
-  const anchor = new Date(startDate);
-  anchor.setHours(0, 0, 0, 0);
-
-  const blocks: any[] = [];
-
-  for (const dayOffset of repeatDays) {
-    const targetDate = new Date(anchor);
-    targetDate.setDate(anchor.getDate() + dayOffset);
-    const dateStr = targetDate.toISOString().split('T')[0]; // "YYYY-MM-DD"
-
-    blocks.push({
-      date: dateStr,
-      start_time: startTime,
-      end_time: endTime,
-      reason,
-      status: 'active',
-    });
-  }
+  const block = {
+    date: startDate,
+    start_time: startTime,
+    end_time: endTime,
+    reason,
+    status: 'active',
+  };
 
   const { data, error } = await supabaseAdmin
     .from('blocked_times')
-    .insert(blocks)
+    .insert(block)   // insert single block
     .select();
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  return NextResponse.json(data);
+  return NextResponse.json(data[0]);  // return single blocked time
 }
 
 // PUT: update a blocked time (admin only)
 export async function PUT(req: NextRequest) {
+    // console.log(req.body);
+
   const session = await auth0.getSession();
   if (!session) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-
-
   const body = await req.json();
   const { id, date, start_time, end_time, reason } = body;
+
+  console.log(id, date, start_time, end_time, reason)
+
   if (!id || !start_time || !end_time || !date) {
     return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
   }
 
   const { data, error } = await supabaseAdmin
     .from('blocked_times')
-    .update({ start_time, end_time, reason })
+    .update({
+      date,         
+      start_time,
+      end_time,
+      reason, 
+    })
     .eq('id', id)
     .select();
 
   if (error) {
+    console.error('❌ Supabase update error:', error.message);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
   const formatted = {
     ...data[0],
+    id: String(data[0].id),                         // Ensure consistent string ID
     start_time: formatTimeTo12Hour(data[0].start_time),
     end_time: formatTimeTo12Hour(data[0].end_time),
   };
 
   return NextResponse.json(formatted);
 }
+
 
 // DELETE: remove a single blocked time by ID (admin only)
 export async function DELETE(req: NextRequest) {

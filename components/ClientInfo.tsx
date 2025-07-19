@@ -52,11 +52,11 @@ export default function ClientInfoModal({
   };
 
   return (
-    <Dialog open={open} onClose={onClose} fullScreen>
+    <Dialog open={open} onClose={onClose} fullWidth>
       <DialogTitle
         sx={{
           display: 'flex',
-          justifyContent: 'space-between',
+          justifyContent: 'right',
           px: 3,
           pt: 3,
         }}
@@ -124,7 +124,7 @@ export default function ClientInfoModal({
           variant="contained"
           fullWidth
           onClick={handleSubmit}
-          sx={{ borderRadius: 2 }}
+          sx={{ borderRadius: 2, background:"black" }}
         >
           Continue to Confirmation
         </Button>

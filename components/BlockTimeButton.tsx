@@ -8,43 +8,38 @@ import {
   DialogActions,
   TextField,
   Box,
-  Checkbox,
-  FormGroup,
-  FormControlLabel,
   Alert
 } from '@mui/material';
 import { DatePicker, TimePicker } from '@mui/x-date-pickers';
 import { useState } from 'react';
-import { format, addDays, isBefore } from 'date-fns';
+import { format, isBefore } from 'date-fns';
 
-const weekdayLabels = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+interface Availability {
+  weekdays: { start: string; end: string };
+  weekends: { start: string; end: string };
+}
 
-export default function BlockTimeButton({ onSuccess }: { onSuccess: () => void }) {
+function parseTimeTo24Hour(timeStr: string): [number, number] {
+  const date = new Date(`2000-01-01 ${timeStr}`);
+  return [date.getHours(), date.getMinutes()];
+}
+
+export default function BlockTimeButton({
+  onSuccess,
+  availability,
+}: {
+  onSuccess: () => void;
+  availability: Availability;
+}) {
   const [open, setOpen] = useState(false);
-  const [startDate, setStartDate] = useState<Date | null>(new Date());
+  const [date, setDate] = useState<Date | null>(new Date());
   const [startTime, setStartTime] = useState<Date | null>(null);
   const [endTime, setEndTime] = useState<Date | null>(null);
   const [reason, setReason] = useState('');
-  const [repeatDays, setRepeatDays] = useState<number[]>([]);
   const [error, setError] = useState<string | null>(null);
 
-  const toggleDay = (day: number) => {
-    setRepeatDays((prev) =>
-      prev.includes(day) ? prev.filter((d) => d !== day) : [...prev, day]
-    );
-  };
-
-  const getPreviewDates = () => {
-    if (!startDate) return [];
-    const previews = repeatDays.map((dayOffset) => {
-      const targetDate = addDays(startDate, dayOffset);
-      return format(targetDate, 'yyyy-MM-dd');
-    });
-    return previews;
-  };
-
   const handleSubmit = async () => {
-    if (!startDate || !startTime || !endTime) {
+    if (!date || !startTime || !endTime) {
       setError('Please fill out all required fields.');
       return;
     }
@@ -54,11 +49,7 @@ export default function BlockTimeButton({ onSuccess }: { onSuccess: () => void }
       return;
     }
 
-    if (repeatDays.length === 0) {
-      setError('Please select at least one recurrence day.');
-      return;
-    }
-
+    const formattedDate = format(date, 'yyyy-MM-dd');
     const formattedStartTime = format(startTime, 'HH:mm');
     const formattedEndTime = format(endTime, 'HH:mm');
 
@@ -66,12 +57,11 @@ export default function BlockTimeButton({ onSuccess }: { onSuccess: () => void }
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        repeatDays,
+        startDate: formattedDate,
         startTime: formattedStartTime,
         endTime: formattedEndTime,
         reason,
-        startDate: format(startDate, 'yyyy-MM-dd')
-        })
+      }),
     });
 
     if (res.ok) {
@@ -83,11 +73,35 @@ export default function BlockTimeButton({ onSuccess }: { onSuccess: () => void }
     }
   };
 
+const blockWholeDay = () => {
+  if (!date || !availability) return;
+
+  const isWeekend = [0, 6].includes(date.getDay());
+  const timeWindow = isWeekend ? availability.weekends : availability.weekdays;
+
+  if (!timeWindow?.start || !timeWindow?.end) {
+    setError('Availability configuration missing.');
+    return;
+  }
+
+  const [startH, startM] = parseTimeTo24Hour(timeWindow.start);
+  const [endH, endM] = parseTimeTo24Hour(timeWindow.end);
+
+  const start = new Date(date);
+  start.setHours(startH, startM, 0, 0);
+
+  const end = new Date(date);
+  end.setHours(endH, endM, 0, 0);
+
+  setStartTime(start);
+  setEndTime(end);
+};
+
+
   const resetForm = () => {
     setStartTime(null);
     setEndTime(null);
     setReason('');
-    setRepeatDays([]);
     setError(null);
   };
 
@@ -101,9 +115,19 @@ export default function BlockTimeButton({ onSuccess }: { onSuccess: () => void }
         <DialogContent>
           <Box display="flex" flexDirection="column" gap={2} mt={1}>
             {error && <Alert severity="error">{error}</Alert>}
-            <DatePicker label="Start Date" value={startDate} onChange={setStartDate} />
-            <TimePicker label="Start Time" value={startTime} onChange={setStartTime} />
-            <TimePicker label="End Time" value={endTime} onChange={setEndTime} />
+            <DatePicker label="Date" value={date} onChange={setDate} />
+            <TimePicker
+              label="Start Time"
+              value={startTime}
+              onChange={setStartTime}
+              minutesStep={30}
+            />
+            <TimePicker
+              label="End Time"
+              value={endTime}
+              onChange={setEndTime}
+              minutesStep={30}
+            />
             <TextField
               label="Reason (optional)"
               value={reason}
@@ -111,31 +135,9 @@ export default function BlockTimeButton({ onSuccess }: { onSuccess: () => void }
               fullWidth
             />
 
-            <FormGroup row>
-              {weekdayLabels.map((label, i) => (
-                <FormControlLabel
-                  key={i}
-                  control={
-                    <Checkbox
-                      checked={repeatDays.includes(i)}
-                      onChange={() => toggleDay(i)}
-                    />
-                  }
-                  label={label}
-                />
-              ))}
-            </FormGroup>
-
-            {repeatDays.length > 0 && (
-              <Box>
-                <strong>Preview Dates:</strong>
-                <ul>
-                  {getPreviewDates().map((d) => (
-                    <li key={d}>{d}</li>
-                  ))}
-                </ul>
-              </Box>
-            )}
+            <Button variant="outlined" onClick={blockWholeDay}>
+              Block Whole Day
+            </Button>
           </Box>
         </DialogContent>
         <DialogActions>

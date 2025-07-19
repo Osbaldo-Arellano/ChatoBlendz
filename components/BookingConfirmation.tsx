@@ -52,14 +52,13 @@ export default function BookingConfirmationModal({
     selectedAddons.reduce((sum, addon) => sum + addon.price, 0);
 
   return (
-    <Dialog open={open} onClose={onClose} fullScreen>
+    <Dialog open={open} onClose={onClose} fullWidth>
       <DialogTitle
         sx={{
           display: 'flex',
-          justifyContent: 'space-between',
+          justifyContent: 'right',
           px: 3,
           pt: 3,
-          WebkitJustifyContent:'right'
         }}
       >
         <IconButton onClick={onClose}>
@@ -67,7 +66,7 @@ export default function BookingConfirmationModal({
         </IconButton>
       </DialogTitle>
 
-      <DialogContent dividers>
+      <DialogContent>
         <Typography variant="h6" fontWeight="bold" color="text.secondary">
             Appointment Confirmation
           </Typography>
@@ -75,7 +74,7 @@ export default function BookingConfirmationModal({
           <Typography variant="subtitle2" color="text.secondary">
             Date
           </Typography>
-          <Typography fontWeight="bold">
+          <Typography fontWeight="bold"> 
             {start.format('dddd, MMM D')} at {start.format('h:mm A')}
           </Typography>
         </Box>
@@ -124,7 +123,7 @@ export default function BookingConfirmationModal({
       </DialogContent>
 
       <DialogActions>
-        <Button onClick={onClose} variant="contained" fullWidth sx={{ borderRadius: 2 }}>
+        <Button onClick={onClose} variant="contained" fullWidth sx={{ borderRadius: 2, background:"black"  }}>
           Confirm
         </Button>
       </DialogActions>

@@ -6,6 +6,7 @@ import AppointmentCalendarView from './AppointmentCalendarView';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import BlockTimeButton from './BlockTimeButton';
+import client from '@/lib/sanityClient';
 
 export type Appointment = {
   id: string;
@@ -28,6 +29,26 @@ export default function AppointmentCalendarClient() {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [blockedTimes, setBlockedTimes] = useState<BlockedTime[]>([]);
   const [loading, setLoading] = useState(true);
+const fallbackAvailability = {
+  weekdays: { start: "00:00", end: "23:59" },
+  weekends: { start: "00:00", end: "23:59" },
+};
+
+const [availability, setAvailability] = useState(fallbackAvailability);
+
+useEffect(() => {
+  async function fetchAvailability() {
+    try {
+      const data = await client.fetch(`*[_type == "availability"][0]{ weekdays, weekends }`);
+      if (data) setAvailability(data);
+    } catch (err) {
+      console.error('Failed to fetch availability:', err);
+    }
+  }
+
+  fetchAvailability();
+}, []);
+
 
   useEffect(() => {
     fetchData();
@@ -101,7 +122,8 @@ export default function AppointmentCalendarClient() {
   }
 
   async function handleBlockUpdate(updated: BlockedTime) {
-    console.log(updated);
+
+    console.log(updated)
     const res = await fetch('/api/admin/blocked-times', {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
@@ -110,30 +132,29 @@ export default function AppointmentCalendarClient() {
 
     if (res.ok) {
       const updatedBlock = await res.json();
+      console.log('✅ Updated block:', updatedBlock);
+
       setBlockedTimes((prev) =>
-        prev.map((b) => (b.id === updatedBlock.id ? updatedBlock : b))
+        prev.map((b) =>
+          String(b.id) === String(updatedBlock.id)
+            ? { ...b, ...updatedBlock }
+            : b
+        )
       );
 
-      await fetchData()
+      await fetchData();
     } else {
       alert('Failed to update blocked time');
     }
   }
 
-  if (loading) {
-    return (
-      <Box display="flex" justifyContent="center" mt={4}>
-        <CircularProgress />
-      </Box>
-    );
-  }
 
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
       <Box display="flex" justifyContent="flex-end" mb={2} sx={{
         m:2
       }}>
-        <BlockTimeButton onSuccess={fetchData} />
+        <BlockTimeButton availability={availability}  onSuccess={fetchData} />
       </Box>
 
       <AppointmentCalendarView

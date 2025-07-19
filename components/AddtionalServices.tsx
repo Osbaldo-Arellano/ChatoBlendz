@@ -1,4 +1,4 @@
-'use client';
+'use client'
 
 import {
   Dialog,
@@ -13,9 +13,11 @@ import {
   IconButton,
   Typography,
   Box,
+  CircularProgress,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import client from '@/lib/sanityClient';
 
 interface AdditionalService {
   id: string;
@@ -30,11 +32,6 @@ interface Props {
   selected: AdditionalService[];
 }
 
-const ADD_ONS: AdditionalService[] = [
-  { id: 'enhancement', name: 'Hair Enhancement', price: 15 },
-  // Add more if needed
-];
-
 export default function AdditionalServicesModal({
   open,
   onClose,
@@ -42,6 +39,36 @@ export default function AdditionalServicesModal({
   selected,
 }: Props) {
   const [localSelection, setLocalSelection] = useState<AdditionalService[]>(selected);
+  const [addOns, setAddOns] = useState<AdditionalService[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchAdditions() {
+      try {
+        const data = await client.fetch(`
+          *[_type == "additions"]{
+            _id,
+            name,
+            price
+          }
+        `);
+
+        const formatted = data.map((item: any) => ({
+          id: item._id,
+          name: item.name,
+          price: item.price,
+        }));
+
+        setAddOns(formatted);
+      } catch (error) {
+        console.error('Failed to fetch additions:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchAdditions();
+  }, []);
 
   const toggleService = (service: AdditionalService) => {
     const exists = localSelection.find((s) => s.id === service.id);
@@ -66,36 +93,56 @@ export default function AdditionalServicesModal({
           alignItems: 'center',
         }}
       >
-        <Typography variant="h6">Add Additional Services</Typography>
+        Add Additional Services
         <IconButton onClick={onClose}>
           <CloseIcon />
         </IconButton>
       </DialogTitle>
 
+
       <DialogContent>
-        <List>
-          {ADD_ONS.map((service) => {
-            const checked = !!localSelection.find((s) => s.id === service.id);
-            return (
+        {loading ? (
+          <Box display="flex" justifyContent="center" py={4}>
+            <CircularProgress />
+          </Box>
+        ) : (
+          <List>
+            {addOns.map((service) => {
+              const checked = !!localSelection.find((s) => s.id === service.id);
+              return (
                 <ListItem
-                    key={service.id}
-                    component="div"
-                    onClick={() => toggleService(service)}
-                    sx={{ cursor: 'pointer' }}
-                    >
-                <Checkbox checked={checked} />
-                <ListItemText
-                  primary={service.name}
-                  secondary={`+$${service.price.toFixed(2)}`}
-                />
-              </ListItem>
-            );
-          })}
-        </List>
+                  key={service.id}
+                  component="div"
+                  onClick={() => toggleService(service)}
+                  sx={{ cursor: 'pointer' }}
+                >
+                  <Checkbox checked={checked} />
+                  <ListItemText
+                    primary={service.name}
+                    secondary={`+$${service.price.toFixed(2)}`}
+                  />
+                </ListItem>
+              );
+            })}
+          </List>
+        )}
       </DialogContent>
 
       <DialogActions sx={{ px: 3, pb: 2 }}>
-        <Button onClick={handleSave} variant="contained" fullWidth>
+        <Button
+          onClick={handleSave}
+          variant="contained"
+          fullWidth
+          sx={{
+            backgroundColor: 'black',
+            color: 'white',
+            fontWeight: 'bold',
+            textTransform: 'none',
+            '&:hover': {
+              backgroundColor: '#222',
+            },
+          }}
+        >
           Save
         </Button>
       </DialogActions>

@@ -13,6 +13,8 @@ import Disclaimers from '@/components/Disclaimer';
 import Portfolio from './Portfolio';
 import ContactCard from './ContactCard';
 import AvailabilityCard from './Availability';
+import sanityClient from '@/lib/sanityClient';
+import client from '@/lib/sanityClient';
 
 const validTabs = ['Services', 'Details', 'Reviews', 'Portfolio'];
 
@@ -50,6 +52,9 @@ export default function BookingPage() {
       router.replace(`?${params.toString()}`, { scroll: false });
     }
   }, [activeTab]);
+  const [availability, setAvailability] = useState<any>(null);
+
+
 
   const renderTabContent = () => {
     switch (activeTab) {
@@ -92,6 +97,27 @@ export default function BookingPage() {
     }
   };
 
+  useEffect(() => {
+    async function fetchAvailability() {
+      try {
+        const data = await client.fetch(`
+          *[_type == "availability"][0]{
+            weekdays,
+            weekends
+          }
+        `);
+            console.log("HEREEEEEEEEEEE" + data)
+        setAvailability(data);
+      } catch (error) {
+        console.error('Failed to fetch availability:', error);
+      }
+    }
+
+
+
+    fetchAvailability();
+  }, []);
+
   return (
     <Box sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', backgroundColor: 'white' }}>
       <Box sx={{ flex: 1 }}>
@@ -105,6 +131,7 @@ export default function BookingPage() {
             setSelectedService(null);
           }}
           selectedService={selectedService}
+          availability={availability}
         />
       </Box>
       <Footer />

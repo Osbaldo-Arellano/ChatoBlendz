@@ -1,22 +1,24 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import client from '@/lib/sanityClient';
 import {
   Box,
-  Typography,
-  IconButton,
-  Collapse,
   Card,
   CardContent,
+  Typography,
+  Button,
+  Collapse,
+  IconButton,
   Grid,
+  CircularProgress,
   Dialog,
   DialogTitle,
   DialogContent,
-  Button,
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
-const highlights = [
+const fallbackSpecials = [
   {
     name: "Skin Fade + Beard Trim",
     description: "Our most booked service — includes razor finish and hot towel.",
@@ -33,7 +35,40 @@ const highlights = [
 
 export default function HighlightList({ onSelect }: { onSelect: (service: any) => void }) {
   const [open, setOpen] = useState(true);
+  const [specials, setSpecials] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
   const [selectedDescription, setSelectedDescription] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function fetchSpecials() {
+      try {
+        const data = await client.fetch(`
+          *[_type == "specials"][0]{
+            services[]->{
+              _id,
+              name,
+              description,
+              price,
+              duration
+            }
+          }
+        `);
+
+        if (!data?.services || data.services.length === 0) {
+          setSpecials(fallbackSpecials);
+        } else {
+          setSpecials(data.services);
+        }
+      } catch (error) {
+        console.error("Sanity fetch failed, using fallback specials:", error);
+        setSpecials(fallbackSpecials);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchSpecials();
+  }, []);
 
   return (
     <Box>
@@ -46,7 +81,7 @@ export default function HighlightList({ onSelect }: { onSelect: (service: any) =
       >
         <Box>
           <Typography variant="h6" fontWeight="bold" color="text.secondary">Barber&apos;s Specials</Typography>
-          <Typography variant="subtitle2" fontWeight="medium" color="text.secondary">🔥 Hand-picked Cuts</Typography>
+          <Typography variant="subtitle2" fontWeight="medium" color="text.secondary">Specialty Cuts</Typography>
         </Box>
         <IconButton size="small">
           <ExpandMoreIcon
@@ -60,65 +95,88 @@ export default function HighlightList({ onSelect }: { onSelect: (service: any) =
 
       <Collapse in={open}>
         <Box mt={2}>
-          {highlights.map((item, idx) => (
-            <Card key={idx} sx={{ borderRadius: 0, borderBottom: '1px dashed #ccc' }}>
-              <CardContent sx={{ py: 2 }}>
-                <Grid container spacing={2} alignItems="center">
-                  <Grid size={{ xs: 7, sm: 5 }}>
-                    <Typography fontWeight="bold">{item.name}</Typography>
-                    <Typography
-                      variant="body2"
-                      color="text.secondary"
-                      sx={{
-                        display: '-webkit-box',
-                        overflow: 'hidden',
-                        WebkitBoxOrient: 'vertical',
-                        WebkitLineClamp: 2,
-                      }}
-                    >
-                      {item.description}
-                    </Typography>
-                    <Typography
-                      variant="body2"
-                      color="primary"
-                      sx={{ cursor: 'pointer', mt: 0.5 }}
-                      onClick={() => setSelectedDescription(item.description)}
-                    >
-                      ...
-                    </Typography>
-                  </Grid>
-
-                  <Grid size={{ xs: 5, sm: 5 }}>
-                    <Box
-                      display="flex"
-                      justifyContent="flex-end"
-                      alignItems="center"
-                      gap={1}
-                      flexWrap="wrap"
-                    >
+          {loading ? (
+            <CircularProgress />
+          ) : (
+            specials.map(special => (
+              <Card key={special._id || special.name} sx={{ borderRadius: 0, borderBottom: '1px dashed #ccc' }}>
+                <CardContent sx={{ py: 2 }}>
+                  <Grid container spacing={2} alignItems="center">
+                    <Grid size={{ xs: 7, sm: 5 }}>
+                      <Typography fontWeight="bold">{special.name}</Typography>
                       <Box>
-                        <Typography fontWeight="bold">${item.price.toFixed(2)}</Typography>
-                        <Typography variant="caption" color="text.secondary">
-                          {item.duration}
+                        <Typography
+                          variant="body2"
+                          color="text.secondary"
+                          sx={{
+                            display: '-webkit-box',
+                            overflow: 'hidden',
+                            WebkitBoxOrient: 'vertical',
+                            WebkitLineClamp: 2,
+                          }}
+                        >
+                          {special.description}
+                        </Typography>
+                        <Typography
+                          variant="body2"
+                          color="primary"
+                          sx={{ cursor: 'pointer', mt: 0.5 }}
+                          onClick={() => setSelectedDescription(special.description)}
+                        >
+                          ...
                         </Typography>
                       </Box>
+                    </Grid>
 
-                      <Button
-                        size="small"
-                        variant="contained"
-                        sx={{ textTransform: 'none' }}
-                        onClick={() => onSelect(item)}
+                    <Grid size={{ xs: 5, sm: 5 }}>
+                      <Box
+                        display="flex"
+                        justifyContent="flex-end"
+                        alignItems="center"
+                        gap={1}
+                        flexWrap="wrap"
                       >
-                        Book
-                      </Button>
-                    </Box>
-                  </Grid>
-                </Grid>
-              </CardContent>
-            </Card>
-          ))}
+                        <Box>
+                          <Typography fontWeight="bold">${special.price.toFixed(2)}</Typography>
+                          <Typography variant="caption" color="text.secondary">
+                            {special.duration}
+                          </Typography>
+                        </Box>
 
-          <Dialog open={!!selectedDescription} onClose={() => setSelectedDescription(null)} maxWidth="sm" fullWidth>
+                        <Button
+                          size="small"
+                          variant="contained"
+                          onClick={() => onSelect(special)}
+                          sx={{
+                            backgroundColor: 'black',
+                            color: 'white',
+                            fontWeight: 'bold',
+                            textTransform: 'none',
+                            '&:hover': {
+                              backgroundColor: '#222',
+                            },
+                            '&:disabled': {
+                              backgroundColor: '#555',
+                              color: 'white',
+                            },
+                          }}
+                        >
+                          Book
+                        </Button>
+                      </Box>
+                    </Grid>
+                  </Grid>
+                </CardContent>
+              </Card>
+            ))
+          )}
+
+          <Dialog
+            open={!!selectedDescription}
+            onClose={() => setSelectedDescription(null)}
+            maxWidth="sm"
+            fullWidth
+          >
             <DialogTitle>Description</DialogTitle>
             <DialogContent>
               <Typography>{selectedDescription}</Typography>
