@@ -21,7 +21,7 @@ import dayjs from 'dayjs';
 interface BookingConfirmationModalProps {
   open: boolean;
   onClose: () => void;
-  onBack: () => void; 
+  onBack: () => void;
   selectedService: {
     name: string;
     price: number;
@@ -52,8 +52,7 @@ export default function BookingConfirmationModal({
   const end = dateObj.add(selectedService?.parsedDuration ?? 0, 'minute');
 
   const totalPrice =
-    (selectedService?.price ?? 0) +
-    selectedAddons.reduce((sum, addon) => sum + addon.price, 0);
+    (selectedService?.price ?? 0) + selectedAddons.reduce((sum, addon) => sum + addon.price, 0);
 
   return (
     <Dialog
@@ -68,11 +67,7 @@ export default function BookingConfirmationModal({
         <Typography variant="h6" fontWeight="bold">
           Appointment Confirmation
         </Typography>
-        <IconButton
-          onClick={onClose}
-          size="small"
-          sx={{ position: 'absolute', top: 8, right: 8 }}
-        >
+        <IconButton onClick={onClose} size="small" sx={{ position: 'absolute', top: 8, right: 8 }}>
           <CloseIcon fontSize="small" />
         </IconButton>
       </DialogTitle>
@@ -86,8 +81,8 @@ export default function BookingConfirmationModal({
             When
           </Typography>
           <Typography fontWeight="medium">
-            {dateObj.format('dddd, MMM D')} at {dateObj.format('h:mm A')} (
-            ends at {end.format('h:mm A')})
+            {dateObj.format('dddd, MMM D')} at {dateObj.format('h:mm A')} ( ends at{' '}
+            {end.format('h:mm A')})
           </Typography>
         </Box>
 
@@ -169,7 +164,7 @@ export default function BookingConfirmationModal({
           variant="contained"
           fullWidth
           disabled={!selectedTime}
-          sx={{ borderRadius: 2, background: "black" }}
+          sx={{ borderRadius: 2, background: 'black' }}
           onClick={() => {
             onClose();
           }}
@@ -177,8 +172,6 @@ export default function BookingConfirmationModal({
           Confirm Appointment
         </Button>
       </DialogActions>
-
-
     </Dialog>
   );
 }

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import client  from '@/lib/sanityClient'; 
+import client from '@/lib/sanityClient';
 import {
   Box,
   Card,
@@ -16,52 +16,50 @@ import {
   DialogContent,
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import loadingAnimation from "@/lottiefiles/Barber's Pole.json"; 
+import loadingAnimation from "@/lottiefiles/Barber's Pole.json";
 import dynamic from 'next/dynamic';
-const Player = dynamic(
-  () => import('@lottiefiles/react-lottie-player').then(mod => mod.Player),
-  { ssr: false }
-);
+const Player = dynamic(() => import('@lottiefiles/react-lottie-player').then((mod) => mod.Player), {
+  ssr: false,
+});
 
 const fallbackServices = [
   {
-    name: "Fade!",
-    description: "A crispy fade will have you ready for any occasion.",
+    name: 'Fade!',
+    description: 'A crispy fade will have you ready for any occasion.',
     price: 25,
-    duration: "1hr",
+    duration: '1hr',
   },
   {
-    name: "Mid Fade",
-    description: "High enough to keep it firme, low enough to keep it classy.",
+    name: 'Mid Fade',
+    description: 'High enough to keep it firme, low enough to keep it classy.',
     price: 25,
-    duration: "1hr",
+    duration: '1hr',
   },
   {
-    name: "Taper",
-    description: "You’ll walk out looking like you know exactly who you are.",
+    name: 'Taper',
+    description: 'You’ll walk out looking like you know exactly who you are.',
     price: 25,
-    duration: "1hr",
+    duration: '1hr',
   },
   {
-    name: "Fade + Face Cleanup",
+    name: 'Fade + Face Cleanup',
     description:
-      "Fresh fade, smooth face. This one goes beyond the cut. You’ll leave looking fresh, like you actually slept last night.",
+      'Fresh fade, smooth face. This one goes beyond the cut. You’ll leave looking fresh, like you actually slept last night.',
     price: 30,
-    duration: "1hr 30m",
+    duration: '1hr 30m',
   },
   {
-    name: "Fade + Beard",
+    name: 'Fade + Beard',
     description:
-      "This one’s for when you need the whole package — clean lines up top, full control below. Walk in scruffy, walk out looking like a G.",
+      'This one’s for when you need the whole package — clean lines up top, full control below. Walk in scruffy, walk out looking like a G.',
     price: 30,
-    duration: "1hr 30min",
+    duration: '1hr 30min',
   },
   {
-    name: "Shears",
-    description:
-      "Precision over clippers. Clean, detailed, and smooth every time.",
+    name: 'Shears',
+    description: 'Precision over clippers. Clean, detailed, and smooth every time.',
     price: 25,
-    duration: "1hr",
+    duration: '1hr',
   },
 ];
 
@@ -90,7 +88,7 @@ export default function ServiceList({ onSelect }: { onSelect: (service: any) => 
           setServices(data);
         }
       } catch (error) {
-        console.error("Sanity fetch failed, using fallback services:", error);
+        console.error('Sanity fetch failed, using fallback services:', error);
         setServices(fallbackServices);
       } finally {
         setLoading(false);
@@ -100,7 +98,6 @@ export default function ServiceList({ onSelect }: { onSelect: (service: any) => 
     fetchServices();
   }, []);
 
-
   return (
     <Box>
       {/* Dropdown Header */}
@@ -109,11 +106,15 @@ export default function ServiceList({ onSelect }: { onSelect: (service: any) => 
         justifyContent="space-between"
         alignItems="center"
         onClick={() => setOpen(!open)}
-        sx={{ cursor: 'pointer', mb: 1, ml: 1, mt: 3  }}
+        sx={{ cursor: 'pointer', mb: 1, ml: 1, mt: 3 }}
       >
         <Box>
-          <Typography variant="h6" fontWeight="bold" color="text.secondary">Services</Typography>
-          <Typography variant="subtitle2" fontWeight="medium" color="text.secondary">Tap In!</Typography>
+          <Typography variant="h6" fontWeight="bold" color="text.secondary">
+            Services
+          </Typography>
+          <Typography variant="subtitle2" fontWeight="medium" color="text.secondary">
+            Tap In!
+          </Typography>
         </Box>
         <IconButton size="small">
           <ExpandMoreIcon
@@ -129,16 +130,11 @@ export default function ServiceList({ onSelect }: { onSelect: (service: any) => 
       <Collapse in={open}>
         <Box mt={2}>
           {loading ? (
-        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', py: 5 }}>
-          <Player
-            autoplay
-            loop
-            src={loadingAnimation}
-            style={{ height: 120, width: 120 }}
-          />
-        </Box>
+            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', py: 5 }}>
+              <Player autoplay loop src={loadingAnimation} style={{ height: 120, width: 120 }} />
+            </Box>
           ) : (
-            services.map(service => (
+            services.map((service) => (
               <Card key={service._id} sx={{ borderRadius: 0, borderBottom: '1px dashed #ccc' }}>
                 <CardContent sx={{ py: 2 }}>
                   <Grid container spacing={2} alignItems="center">
@@ -205,7 +201,6 @@ export default function ServiceList({ onSelect }: { onSelect: (service: any) => 
                         >
                           Book
                         </Button>
-
                       </Box>
                     </Grid>
                   </Grid>
@@ -224,10 +219,8 @@ export default function ServiceList({ onSelect }: { onSelect: (service: any) => 
               <Typography>{selectedDescription}</Typography>
             </DialogContent>
           </Dialog>
-
         </Box>
       </Collapse>
-      
     </Box>
   );
 }

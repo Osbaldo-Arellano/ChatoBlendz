@@ -1,14 +1,6 @@
 'use client';
 
-import {
-  Box,
-  Paper,
-  Typography,
-  Divider,
-  IconButton,
-  Stack,
-  Fab,
-} from '@mui/material';
+import { Box, Paper, Typography, Divider, IconButton, Stack, Fab } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
@@ -16,7 +8,6 @@ import { Appointment, BlockedTime } from './AppointmentCalendarClient';
 import { useMemo, useRef, useEffect, useState, useCallback } from 'react';
 import { addDays, format } from 'date-fns';
 import BlockedTimeDialog from './BlockedTimeDialog';
-
 
 const DAYS_PER_PAGE = 14;
 
@@ -41,7 +32,6 @@ export default function AppointmentCalendarView({
   const [showScrollTop, setShowScrollTop] = useState(false);
 
   const startDate = useMemo(() => new Date(), []);
-  const endDate = useMemo(() => addDays(startDate, visibleDays), [startDate, visibleDays]);
 
   const handleScroll = useCallback(() => {
     const el = containerRef.current;
@@ -116,48 +106,47 @@ export default function AppointmentCalendarView({
               </Typography>
               <Divider />
 
-          {dayBlocked.map((block) => (
-            <Box
-              key={block.id}
-              sx={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                py: 2,
-                borderBottom: '1px solid #eee',
-              }}
-            >
-              <Box>
-                <Typography fontWeight="bold" color="error">
-                  Blocked Time
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  {block.reason || 'No reason specified'}
-                </Typography>
-                <Typography variant="body2">
-                  {block.start_time} – {block.end_time}
-                </Typography>
-              </Box>
-
-              <Stack direction="row" spacing={1}>
-                <IconButton
-                    aria-label="edit"
-                    color="primary"
-                    onClick={() => setEditingBlock(block)}
-                  >
-                  <EditIcon />
-                </IconButton>
-                <IconButton
-                  aria-label="delete"
-                  color="error"
-                  onClick={() => onBlockDelete(block.id)}
+              {dayBlocked.map((block) => (
+                <Box
+                  key={block.id}
+                  sx={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    py: 2,
+                    borderBottom: '1px solid #eee',
+                  }}
                 >
-                  <DeleteIcon />
-                </IconButton>
-              </Stack>
-            </Box>
-            
-          ))}
+                  <Box>
+                    <Typography fontWeight="bold" color="error">
+                      Blocked Time
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      {block.reason || 'No reason specified'}
+                    </Typography>
+                    <Typography variant="body2">
+                      {block.start_time} – {block.end_time}
+                    </Typography>
+                  </Box>
+
+                  <Stack direction="row" spacing={1}>
+                    <IconButton
+                      aria-label="edit"
+                      color="primary"
+                      onClick={() => setEditingBlock(block)}
+                    >
+                      <EditIcon />
+                    </IconButton>
+                    <IconButton
+                      aria-label="delete"
+                      color="error"
+                      onClick={() => onBlockDelete(block.id)}
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  </Stack>
+                </Box>
+              ))}
 
               {dayAppointments.length > 0 ? (
                 dayAppointments.map((appt) => (
@@ -176,9 +165,7 @@ export default function AppointmentCalendarView({
                       <Typography variant="body2" color="text.secondary">
                         {appt.service}
                       </Typography>
-                      <Typography variant="body2">
-                        {appt.time}
-                      </Typography>
+                      <Typography variant="body2">{appt.time}</Typography>
                     </Box>
 
                     <Stack direction="row" spacing={1}>
@@ -186,7 +173,10 @@ export default function AppointmentCalendarView({
                         aria-label="edit"
                         color="primary"
                         onClick={() => {
-                          const updated = { ...appt, name: prompt('Edit name', appt.name) || appt.name };
+                          const updated = {
+                            ...appt,
+                            name: prompt('Edit name', appt.name) || appt.name,
+                          };
                           onUpdate(updated);
                         }}
                       >
@@ -201,7 +191,6 @@ export default function AppointmentCalendarView({
                         <DeleteIcon />
                       </IconButton>
                     </Stack>
-                    
                   </Box>
                 ))
               ) : (
@@ -209,11 +198,8 @@ export default function AppointmentCalendarView({
                   No appointments for this day.
                 </Typography>
               )}
-              
             </Box>
-            
           );
-          
         })}
       </Paper>
 

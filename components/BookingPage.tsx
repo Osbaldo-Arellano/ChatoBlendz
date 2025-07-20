@@ -65,7 +65,7 @@ export default function BookingPage() {
                   name: s.name,
                   price: s.price,
                   duration: parseDurationToMinutes(s.duration),
-                  parsedDuration: s.parsedDuration
+                  parsedDuration: s.parsedDuration,
                 });
                 setCalendarOpen(true);
               }}
@@ -76,7 +76,7 @@ export default function BookingPage() {
                   name: s.name,
                   price: s.price,
                   duration: parseDurationToMinutes(s.duration),
-                  parsedDuration: s.parsedDuration
+                  parsedDuration: s.parsedDuration,
                 });
                 setCalendarOpen(true);
               }}
@@ -114,7 +114,14 @@ export default function BookingPage() {
   }, []);
 
   return (
-    <Box sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', backgroundColor: 'white' }}>
+    <Box
+      sx={{
+        minHeight: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
+        backgroundColor: 'white',
+      }}
+    >
       <Box sx={{ flex: 1 }}>
         <BarberProfile />
         <SectionNav active={activeTab} onChange={setActiveTab} />

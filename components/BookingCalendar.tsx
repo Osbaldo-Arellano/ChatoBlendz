@@ -66,22 +66,62 @@ interface ClientInfo {
 }
 
 const timeSlots = [
-  '7:00 AM','7:30 AM','8:00 AM','8:30 AM','9:00 AM','9:30 AM','10:00 AM','10:30 AM','11:00 AM','11:30 AM','12:00 PM','12:30 PM','1:00 PM','1:30 PM','2:00 PM','2:30 PM','3:00 PM','3:30 PM','4:00 PM','4:30 PM','5:00 PM','5:30 PM','6:00 PM','6:30 PM','7:00 PM','7:30 PM','8:00 PM','8:30 PM','9:00 PM','9:30 PM','10:00 PM','11:00 PM'
+  '7:00 AM',
+  '7:30 AM',
+  '8:00 AM',
+  '8:30 AM',
+  '9:00 AM',
+  '9:30 AM',
+  '10:00 AM',
+  '10:30 AM',
+  '11:00 AM',
+  '11:30 AM',
+  '12:00 PM',
+  '12:30 PM',
+  '1:00 PM',
+  '1:30 PM',
+  '2:00 PM',
+  '2:30 PM',
+  '3:00 PM',
+  '3:30 PM',
+  '4:00 PM',
+  '4:30 PM',
+  '5:00 PM',
+  '5:30 PM',
+  '6:00 PM',
+  '6:30 PM',
+  '7:00 PM',
+  '7:30 PM',
+  '8:00 PM',
+  '8:30 PM',
+  '9:00 PM',
+  '9:30 PM',
+  '10:00 PM',
+  '11:00 PM',
 ];
 
-export default function CombinedBookingModal({ open, onClose, selectedService }: BookingModalProps) {
+export default function CombinedBookingModal({
+  open,
+  onClose,
+  selectedService,
+}: BookingModalProps) {
   const [step, setStep] = useState<'calendar' | 'clientInfo' | 'confirmation'>('calendar');
   const [days, setDays] = useState<Dayjs[]>([...Array(14)].map((_, i) => dayjs().add(i, 'day')));
   const [selectedDay, setSelectedDay] = useState<Dayjs>(dayjs());
   const [selectedTime, setSelectedTime] = useState('');
   const [selectedAddons, setSelectedAddons] = useState<AdditionalService[]>([]);
   const [addonsModalOpen, setAddonsModalOpen] = useState(false);
-  const [clientInfo, setClientInfo] = useState<ClientInfo>({ name: '', phone: '', smsReminder: true });
+  const [clientInfo, setClientInfo] = useState<ClientInfo>({
+    name: '',
+    phone: '',
+    smsReminder: true,
+  });
   const [appointments, setAppointments] = useState<string[]>([]);
   const [blockedTimes, setBlockedTimes] = useState<string[]>([]);
   const [availability, setAvailability] = useState<Availability | null>(null);
 
-  const totalPrice = (selectedService?.price ?? 0) + selectedAddons.reduce((sum, a) => sum + a.price, 0);
+  const totalPrice =
+    (selectedService?.price ?? 0) + selectedAddons.reduce((sum, a) => sum + a.price, 0);
   const dateObj = dayjs(`${selectedDay.format('YYYY-MM-DD')} ${selectedTime}`, 'YYYY-MM-DD h:mm A');
   const end = dateObj.add(selectedService?.parsedDuration ?? 0, 'minute');
   const isWeekend = selectedDay.day() === 0 || selectedDay.day() === 6;
@@ -91,10 +131,9 @@ export default function CombinedBookingModal({ open, onClose, selectedService }:
       : availability.weekdays
     : null;
 
-
   useEffect(() => {
-      if (selectedDay) fetchSchedule(selectedDay.format('YYYY-MM-DD'));
-    }, [selectedDay]);
+    if (selectedDay) fetchSchedule(selectedDay.format('YYYY-MM-DD'));
+  }, [selectedDay]);
 
   interface AvailabilityWindow {
     start: string;
@@ -115,11 +154,11 @@ export default function CombinedBookingModal({ open, onClose, selectedService }:
             weekends
           }
         `);
-        console.log("Location: BookingCalendar.tsx. \n Data: " + data);
+        console.log('Location: BookingCalendar.tsx. \n Data: ' + data);
         setAvailability(data);
       } catch (error) {
         console.error('Failed to fetch availability:', error);
-      } 
+      }
     }
 
     fetchAvailability();
@@ -134,8 +173,8 @@ export default function CombinedBookingModal({ open, onClose, selectedService }:
       const expandedBlockedTimes: string[] = [];
       blockedTimes.forEach((range: { start_time: string; end_time: string }) => {
         const clean = (str: string) => str.trim().toUpperCase();
-        const startIndex = timeSlots.findIndex(slot => clean(slot) === clean(range.start_time));
-        const endIndex = timeSlots.findIndex(slot => clean(slot) === clean(range.end_time));
+        const startIndex = timeSlots.findIndex((slot) => clean(slot) === clean(range.start_time));
+        const endIndex = timeSlots.findIndex((slot) => clean(slot) === clean(range.end_time));
         if (startIndex !== -1 && endIndex !== -1) {
           expandedBlockedTimes.push(...timeSlots.slice(startIndex, endIndex + 1));
         }
@@ -145,8 +184,6 @@ export default function CombinedBookingModal({ open, onClose, selectedService }:
       console.error(e);
     }
   }
-
-  const isUnavailable = (time: string) => appointments.includes(time) || blockedTimes.includes(time);
 
   const handleSubmitClientInfo = () => {
     if (!clientInfo.name || !clientInfo.phone) return;
@@ -165,97 +202,96 @@ export default function CombinedBookingModal({ open, onClose, selectedService }:
     onClose();
   };
 
-  const filteredSlots = currentAvailability
-  ? timeSlots.filter((time) => {
-      const format = 'h:mm A';
-      const timeValue = dayjs(time, format);
-      const startTime = dayjs(currentAvailability.start, format);
-      const endTime = dayjs(currentAvailability.end, format);
-
-      return timeValue.isSameOrAfter(startTime) && timeValue.isSameOrBefore(endTime);
-    })
-  : [];
-
-  
   return (
-    <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm" PaperProps={{ sx: { borderRadius: 3 } }}>
+    <Dialog
+      open={open}
+      onClose={handleClose}
+      fullWidth
+      maxWidth="sm"
+      PaperProps={{ sx: { borderRadius: 3 } }}
+    >
       <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <Typography fontWeight="bold">Book Your Appointment</Typography>
-        <IconButton onClick={handleClose}><CloseIcon /></IconButton>
+        <IconButton onClick={handleClose}>
+          <CloseIcon />
+        </IconButton>
       </DialogTitle>
 
       <DialogContent dividers sx={{ px: 3, py: 2 }}>
         {step === 'calendar' && (
-  <>
-        <Typography fontWeight="bold" sx={{ mb: 1 }}>Select Date</Typography>
-        <Box sx={{ display: 'flex', overflowX: 'auto', gap: 1, mb: 3 }}>
-          {days.map((day) => (
-            <Button
-              key={day.toString()}
-              onClick={() => { setSelectedDay(day); setSelectedTime(''); }}
+          <>
+            <Typography fontWeight="bold" sx={{ mb: 1 }}>
+              Select Date
+            </Typography>
+            <Box sx={{ display: 'flex', overflowX: 'auto', gap: 1, mb: 3 }}>
+              {days.map((day) => (
+                <Button
+                  key={day.toString()}
+                  onClick={() => {
+                    setSelectedDay(day);
+                    setSelectedTime('');
+                  }}
+                  sx={{
+                    minWidth: 48,
+                    fontSize: '0.75rem',
+                    fontWeight: 'bold',
+                    flexDirection: 'column',
+                    color: day.isSame(selectedDay, 'day') ? 'black' : 'white',
+                    backgroundColor: day.isSame(selectedDay, 'day') ? '#e0e0e0' : '#1a1a1a',
+                    borderRadius: 2,
+                    py: 1,
+                  }}
+                >
+                  {day.format('ddd')}
+                  <Typography fontSize="0.8rem">{day.format('D')}</Typography>
+                </Button>
+              ))}
+            </Box>
+
+            <Typography fontWeight="bold">Select Time</Typography>
+            <Box
               sx={{
-                minWidth: 48,
-                fontSize: '0.75rem',
-                fontWeight: 'bold',
-                flexDirection: 'column',
-                color: day.isSame(selectedDay, 'day') ? 'black' : 'white',
-                backgroundColor: day.isSame(selectedDay, 'day') ? '#e0e0e0' : '#1a1a1a',
-                borderRadius: 2,
-                py: 1,
+                display: 'flex',
+                overflowX: 'auto',
+                gap: 1,
+                mb: 1,
               }}
-            >
-              {day.format('ddd')}
-              <Typography fontSize="0.8rem">{day.format('D')}</Typography>
-            </Button>
-          ))}
-        </Box>
+            ></Box>
+            <TimeSlotSelector
+              timeSlots={timeSlots}
+              availability={availability}
+              selectedDay={selectedDay}
+              blockedTimes={blockedTimes}
+              onSelectTime={(time) => setSelectedTime(time)}
+              selectedTime={selectedTime} // <-- NEW
+            />
+            {/* Preview Section */}
+            <Box>
+              <Typography fontSize="0.9rem" fontWeight="bold" sx={{ mb: 0.5 }}>
+                Date:
+              </Typography>
+              <Typography variant="body2">
+                {selectedDay.format('dddd, MMM D')} at {selectedTime}
+              </Typography>
+            </Box>
 
-        <Typography fontWeight="bold">Select Time</Typography>
-        <Box
-          sx={{
-            display: 'flex',
-            overflowX: 'auto',
-            gap: 1,
-            mb: 1,
-          }}
-        >
-        </Box>
-          <TimeSlotSelector
-            timeSlots={timeSlots}
-            availability={availability}
-            selectedDay={selectedDay}
-            blockedTimes={blockedTimes}
-            onSelectTime={(time) => setSelectedTime(time)}
-            selectedTime={selectedTime}                         // <-- NEW
-          />
-        {/* Preview Section */}
-        <Box>
-          <Typography fontSize="0.9rem" fontWeight="bold" sx={{ mb: 0.5 }}>
-            Date:
-          </Typography>
-          <Typography variant="body2">
-            {selectedDay.format('dddd, MMM D')} at {selectedTime}
-          </Typography>
-        </Box>
+            <Divider sx={{ my: 2 }} />
 
-        <Divider sx={{ my: 2 }} />
+            <Box>
+              <Typography fontSize="0.9rem" fontWeight="bold" sx={{ mb: 0.5 }}>
+                Service:
+              </Typography>
+              <Typography fontSize="0.9rem" fontWeight="bold" sx={{ mb: 0.5 }} gutterBottom>
+                {selectedService?.name} - ${selectedService?.price}
+              </Typography>
+            </Box>
 
-          <Box>
-          <Typography fontSize="0.9rem" fontWeight="bold" sx={{ mb: 0.5 }}>
-            Service:
-          </Typography>
-          <Typography fontSize="0.9rem" fontWeight="bold" sx={{ mb: 0.5 }} gutterBottom>
-            {selectedService?.name} - ${selectedService?.price}
-          </Typography>
-          </Box>
-
-            <Divider sx={{ my: 2, mt: 2, }} />
+            <Divider sx={{ my: 2, mt: 2 }} />
             <Typography fontSize="0.9rem" fontWeight="bold" sx={{ mb: 0.5 }}>
               Addtional Services:
             </Typography>
             {selectedAddons.length > 0 && (
               <Box>
-                
                 {selectedAddons.map((addon) => (
                   <Box
                     key={addon.id}
@@ -265,20 +301,19 @@ export default function CombinedBookingModal({ open, onClose, selectedService }:
                       alignItems: 'center',
                       py: 0.5,
                     }}
-                    
                   >
                     <Typography variant="body2" color="text.secondary">
                       + {addon.name}
                     </Typography>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                      <Typography variant="body2">
-                        ${addon.price.toFixed(2)}
-                      </Typography>
+                      <Typography variant="body2">${addon.price.toFixed(2)}</Typography>
                       <Button
                         size="small"
                         variant="text"
                         color="error"
-                        onClick={() => setSelectedAddons(prev => prev.filter(a => a.id !== addon.id))}
+                        onClick={() =>
+                          setSelectedAddons((prev) => prev.filter((a) => a.id !== addon.id))
+                        }
                         sx={{ fontSize: '0.7rem', minWidth: 'unset', px: 0.5 }}
                       >
                         Remove
@@ -297,9 +332,7 @@ export default function CombinedBookingModal({ open, onClose, selectedService }:
               + Add another service
             </Typography>
 
-            <Typography fontWeight="bold">
-              Total: ${totalPrice.toFixed(2)}
-            </Typography>
+            <Typography fontWeight="bold">Total: ${totalPrice.toFixed(2)}</Typography>
           </>
         )}
         {step === 'clientInfo' && (
@@ -312,17 +345,15 @@ export default function CombinedBookingModal({ open, onClose, selectedService }:
               label="Full Name"
               fullWidth
               value={clientInfo.name}
-              onChange={(e) =>
-                setClientInfo({ ...clientInfo, name: e.target.value })
-              }
+              onChange={(e) => setClientInfo({ ...clientInfo, name: e.target.value })}
               sx={{ mb: 2 }}
             />
-          <PhoneInput
-            value={clientInfo.phone}
-            onChange={(value) => setClientInfo({ ...clientInfo, phone: value || '' })}
-            placeholder="(555) 555-5555"
-            className="phone-input"
-          />
+            <PhoneInput
+              value={clientInfo.phone}
+              onChange={(value) => setClientInfo({ ...clientInfo, phone: value || '' })}
+              placeholder="(555) 555-5555"
+              className="phone-input"
+            />
             <FormControlLabel
               control={
                 <Checkbox
@@ -342,13 +373,22 @@ export default function CombinedBookingModal({ open, onClose, selectedService }:
 
         {step === 'confirmation' && (
           <>
-            <Typography fontWeight="bold" sx={{ mb: 1 }}>Confirm Appointment</Typography>
+            <Typography fontWeight="bold" sx={{ mb: 1 }}>
+              Confirm Appointment
+            </Typography>
 
-            <Typography>{dateObj.format('dddd, MMM D')} at {dateObj.format('h:mm A')} (ends {end.format('h:mm A')})</Typography>
+            <Typography>
+              {dateObj.format('dddd, MMM D')} at {dateObj.format('h:mm A')} (ends{' '}
+              {end.format('h:mm A')})
+            </Typography>
             <Divider sx={{ my: 2 }} />
-            <Typography>{selectedService?.name} — ${selectedService?.price}</Typography>
+            <Typography>
+              {selectedService?.name} — ${selectedService?.price}
+            </Typography>
             {selectedAddons.map((addon) => (
-              <Typography key={addon.id}>+ {addon.name} — ${addon.price.toFixed(2)}</Typography>
+              <Typography key={addon.id}>
+                + {addon.name} — ${addon.price.toFixed(2)}
+              </Typography>
             ))}
             <Divider sx={{ my: 2 }} />
             <Typography>Client: {clientInfo.name}</Typography>
@@ -419,7 +459,8 @@ export default function CombinedBookingModal({ open, onClose, selectedService }:
               borderRadius: 2,
             }}
           >
-            Confirm<CheckCircleIcon sx={{ml:1, color:'green'}} />
+            Confirm
+            <CheckCircleIcon sx={{ ml: 1, color: 'green' }} />
           </Button>
         )}
       </DialogActions>

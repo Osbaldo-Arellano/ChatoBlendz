@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import { InputMask } from '@react-input/mask';
 import { forwardRef } from 'react';

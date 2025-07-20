@@ -36,8 +36,7 @@ export default function SectionNav({
               py: 1,
               minWidth: 'unset',
               color: isActive ? '#000' : '#AAA',
-              '&:hover': {
-              },
+              '&:hover': {},
               '&::after': isActive
                 ? {
                     content: '""',
@@ -48,7 +47,7 @@ export default function SectionNav({
                     width: '40px',
                     height: '10px',
                     backgroundImage:
-                      'url("data:image/svg+xml,%3Csvg width=\'40\' height=\'10\' viewBox=\'0 0 40 10\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cpath d=\'M0,5 C10,10 30,0 40,5\' stroke=\'black\' fill=\'transparent\' stroke-width=\'2\'/%3E%3C/svg%3E")',
+                      "url(\"data:image/svg+xml,%3Csvg width='40' height='10' viewBox='0 0 40 10' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0,5 C10,10 30,0 40,5' stroke='black' fill='transparent' stroke-width='2'/%3E%3C/svg%3E\")",
                     backgroundRepeat: 'no-repeat',
                     backgroundPosition: 'center',
                   }

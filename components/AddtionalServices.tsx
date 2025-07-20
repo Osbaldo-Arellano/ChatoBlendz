@@ -19,11 +19,10 @@ import CloseIcon from '@mui/icons-material/Close';
 import { useState, useEffect } from 'react';
 import client from '@/lib/sanityClient';
 import dynamic from 'next/dynamic';
-const Player = dynamic(
-  () => import('@lottiefiles/react-lottie-player').then(mod => mod.Player),
-  { ssr: false }
-);
-import loadingAnimation from "@/lottiefiles/Barber's Pole.json"; 
+const Player = dynamic(() => import('@lottiefiles/react-lottie-player').then((mod) => mod.Player), {
+  ssr: false,
+});
+import loadingAnimation from "@/lottiefiles/Barber's Pole.json";
 
 interface AdditionalService {
   id: string;
@@ -38,12 +37,7 @@ interface Props {
   selected: AdditionalService[];
 }
 
-export default function AdditionalServicesModal({
-  open,
-  onClose,
-  onSelect,
-  selected,
-}: Props) {
+export default function AdditionalServicesModal({ open, onClose, onSelect, selected }: Props) {
   const [localSelection, setLocalSelection] = useState<AdditionalService[]>(selected);
   const [addOns, setAddOns] = useState<AdditionalService[]>([]);
   const [loading, setLoading] = useState(true);
@@ -91,7 +85,11 @@ export default function AdditionalServicesModal({
   };
 
   return (
-    <Dialog open={open} onClose={onClose} fullWidth maxWidth="xs"
+    <Dialog
+      open={open}
+      onClose={onClose}
+      fullWidth
+      maxWidth="xs"
       PaperProps={{ sx: { borderRadius: 3, backgroundColor: 'white', color: 'black' } }}
     >
       <DialogTitle
@@ -115,13 +113,8 @@ export default function AdditionalServicesModal({
         {loading ? (
           <Box display="flex" justifyContent="center" py={4}>
             <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', py: 5 }}>
-        <Player
-          autoplay
-          loop
-          src={loadingAnimation}
-          style={{ height: 120, width: 120 }}
-        />
-      </Box>
+              <Player autoplay loop src={loadingAnimation} style={{ height: 120, width: 120 }} />
+            </Box>
           </Box>
         ) : (
           <List>
@@ -144,10 +137,7 @@ export default function AdditionalServicesModal({
                     </Typography>
                   }
                 >
-                  <Checkbox
-                    checked={checked}
-                    sx={{ color: 'black' }}
-                  />
+                  <Checkbox checked={checked} sx={{ color: 'black' }} />
                   <ListItemText
                     primary={
                       <Typography fontWeight={checked ? 'bold' : 'medium'} color="black">

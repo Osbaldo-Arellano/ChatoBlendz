@@ -1,21 +1,13 @@
 'use client';
 
 import { useState } from 'react';
-import {
-  Box,
-  Typography,
-  IconButton,
-  Collapse,
-  Card,
-  CardContent,
-  Grid,
-} from '@mui/material';
+import { Box, Typography, IconButton, Collapse, Card, CardContent, Grid } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 const disclaimers = [
   'Please arrive 5 minutes early.',
   'Cancellations must be made at least 4 hours in advance.',
-  'Please approve text messages so that you don\'t miss an appointment.'
+  "Please approve text messages so that you don't miss an appointment.",
 ];
 
 export default function Disclaimers() {
@@ -31,8 +23,12 @@ export default function Disclaimers() {
         sx={{ cursor: 'pointer', mb: 1, ml: 1, mt: 3 }}
       >
         <Box>
-          <Typography variant="h6" fontWeight="bold" color="text.secondary">Disclaimers</Typography>
-          <Typography variant="subtitle2" fontWeight="medium" color="text.secondary">Policies & Notes</Typography>
+          <Typography variant="h6" fontWeight="bold" color="text.secondary">
+            Disclaimers
+          </Typography>
+          <Typography variant="subtitle2" fontWeight="medium" color="text.secondary">
+            Policies & Notes
+          </Typography>
         </Box>
         <IconButton size="small">
           <ExpandMoreIcon

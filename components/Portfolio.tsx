@@ -7,14 +7,10 @@ import {
   Button,
   Card,
   CardMedia,
-  CardContent,
   IconButton,
   Collapse,
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
-import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
-import ShareIcon from '@mui/icons-material/Share';
 
 const imageList = [
   '/images/2.jpg',
@@ -63,8 +59,12 @@ export default function GalleryList() {
         sx={{ cursor: 'pointer', mb: 1, ml: 1, mt: 3 }}
       >
         <Box>
-          <Typography variant="h6" fontWeight="bold" color="text.secondary">Photos</Typography>
-          <Typography variant="subtitle2" fontWeight="medium" color="text.secondary">Don&lsquo;t blink</Typography>
+          <Typography variant="h6" fontWeight="bold" color="text.secondary">
+            Photos
+          </Typography>
+          <Typography variant="subtitle2" fontWeight="medium" color="text.secondary">
+            Don&lsquo;t blink
+          </Typography>
         </Box>
         <IconButton size="small">
           <ExpandMoreIcon
@@ -78,9 +78,9 @@ export default function GalleryList() {
 
       {/*  Gallery Images Section  */}
       <Collapse in={galleryOpen}>
-        <Box display="flex" flexDirection="column" sx={{mx: 1, my: 2}}>
+        <Box display="flex" flexDirection="column" sx={{ mx: 1, my: 2 }}>
           {visibleImages.map((src, idx) => (
-            <Card key={idx} sx={{ overflow: 'hidden',  borderRadius:2 }}>
+            <Card key={idx} sx={{ overflow: 'hidden', borderRadius: 2 }}>
               <Box
                 sx={{
                   position: 'relative',
@@ -102,7 +102,6 @@ export default function GalleryList() {
                   }}
                 />
               </Box>
-
             </Card>
           ))}
         </Box>
@@ -126,8 +125,12 @@ export default function GalleryList() {
         sx={{ cursor: 'pointer', mb: 1, ml: 1, mt: 3 }}
       >
         <Box>
-          <Typography variant="h6" fontWeight="bold" color="text.secondary">Videos</Typography>
-          <Typography variant="subtitle2" fontWeight="medium" color="text.secondary">Real cuts, real time</Typography>
+          <Typography variant="h6" fontWeight="bold" color="text.secondary">
+            Videos
+          </Typography>
+          <Typography variant="subtitle2" fontWeight="medium" color="text.secondary">
+            Real cuts, real time
+          </Typography>
         </Box>
         <IconButton size="small">
           <ExpandMoreIcon

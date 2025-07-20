@@ -15,7 +15,7 @@ export default function Footer() {
         px: 2,
         mt: 4,
         textAlign: 'center',
-        maxWidth: "100%",
+        maxWidth: '100%',
         mx: 'auto',
       }}
     >
@@ -34,25 +34,21 @@ export default function Footer() {
           <InstagramIcon fontSize="small" />
         </IconButton>
 
-        <IconButton
-          component="a"
-          href="mailto:bookings@chatoblendz.com"
-          aria-label="Email"
-        >
+        <IconButton component="a" href="mailto:bookings@chatoblendz.com" aria-label="Email">
           <EmailIcon fontSize="small" />
         </IconButton>
       </Box>
-        <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+      <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
         Website designed and coded by{' '}
         <Link
-            href="https://xicanoweb.carrd.co/"
-            target="_blank"
-            rel="noopener noreferrer"
-            underline="hover"
+          href="https://xicanoweb.carrd.co/"
+          target="_blank"
+          rel="noopener noreferrer"
+          underline="hover"
         >
-            Xicano Web Services
+          Xicano Web Services
         </Link>
-        </Typography>
+      </Typography>
     </Box>
   );
 }

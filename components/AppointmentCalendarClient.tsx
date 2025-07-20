@@ -28,27 +28,25 @@ export type BlockedTime = {
 export default function AppointmentCalendarClient() {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [blockedTimes, setBlockedTimes] = useState<BlockedTime[]>([]);
-  const [loading, setLoading] = useState(true);
-const fallbackAvailability = {
-  weekdays: { start: "00:00", end: "23:59" },
-  weekends: { start: "00:00", end: "23:59" },
-};
+  const fallbackAvailability = {
+    weekdays: { start: '00:00', end: '23:59' },
+    weekends: { start: '00:00', end: '23:59' },
+  };
 
-const [availability, setAvailability] = useState(fallbackAvailability);
+  const [availability, setAvailability] = useState(fallbackAvailability);
 
-useEffect(() => {
-  async function fetchAvailability() {
-    try {
-      const data = await client.fetch(`*[_type == "availability"][0]{ weekdays, weekends }`);
-      if (data) setAvailability(data);
-    } catch (err) {
-      console.error('Failed to fetch availability:', err);
+  useEffect(() => {
+    async function fetchAvailability() {
+      try {
+        const data = await client.fetch(`*[_type == "availability"][0]{ weekdays, weekends }`);
+        if (data) setAvailability(data);
+      } catch (err) {
+        console.error('Failed to fetch availability:', err);
+      }
     }
-  }
 
-  fetchAvailability();
-}, []);
-
+    fetchAvailability();
+  }, []);
 
   useEffect(() => {
     fetchData();
@@ -68,8 +66,6 @@ useEffect(() => {
       setBlockedTimes(blockedData);
     } catch (err) {
       console.error('Error loading data:', err);
-    } finally {
-      setLoading(false);
     }
   }
 
@@ -97,9 +93,7 @@ useEffect(() => {
     });
 
     if (res.ok) {
-      setAppointments((prev) =>
-        prev.map((a) => (a.id === updated.id ? { ...a, ...updated } : a))
-      );
+      setAppointments((prev) => prev.map((a) => (a.id === updated.id ? { ...a, ...updated } : a)));
     } else {
       alert('Failed to update appointment');
     }
@@ -122,7 +116,6 @@ useEffect(() => {
   }
 
   async function handleBlockUpdate(updated: BlockedTime) {
-
     const res = await fetch('/api/admin/blocked-times', {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
@@ -133,11 +126,7 @@ useEffect(() => {
       const updatedBlock = await res.json();
 
       setBlockedTimes((prev) =>
-        prev.map((b) =>
-          String(b.id) === String(updatedBlock.id)
-            ? { ...b, ...updatedBlock }
-            : b
-        )
+        prev.map((b) => (String(b.id) === String(updatedBlock.id) ? { ...b, ...updatedBlock } : b)),
       );
 
       await fetchData();
@@ -146,13 +135,17 @@ useEffect(() => {
     }
   }
 
-
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
-      <Box display="flex" justifyContent="flex-end" mb={2} sx={{
-        m:2
-      }}>
-        <BlockTimeButton availability={availability}  onSuccess={fetchData} />
+      <Box
+        display="flex"
+        justifyContent="flex-end"
+        mb={2}
+        sx={{
+          m: 2,
+        }}
+      >
+        <BlockTimeButton availability={availability} onSuccess={fetchData} />
       </Box>
 
       <AppointmentCalendarView

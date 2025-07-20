@@ -1,8 +1,13 @@
 'use client';
 
 import {
-  Dialog, DialogTitle, DialogContent, DialogActions,
-  Button, Stack, TextField
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+  Stack,
+  TextField,
 } from '@mui/material';
 import { DatePicker, TimePicker } from '@mui/x-date-pickers';
 import { useState, useEffect } from 'react';
@@ -54,7 +59,7 @@ export default function BlockedTimeDialog({ open, onClose, onSave, block }: Prop
     const endStr = endTime.toTimeString().slice(0, 5);
 
     onSave({
-      ...block,  
+      ...block,
       date: dateStr,
       start_time: startStr,
       end_time: endStr,
@@ -99,7 +104,9 @@ export default function BlockedTimeDialog({ open, onClose, onSave, block }: Prop
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose}>Cancel</Button>
-        <Button variant="contained" onClick={handleSave}>Save</Button>
+        <Button variant="contained" onClick={handleSave}>
+          Save
+        </Button>
       </DialogActions>
     </Dialog>
   );

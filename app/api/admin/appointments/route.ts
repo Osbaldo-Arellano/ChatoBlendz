@@ -22,7 +22,6 @@ export async function GET() {
   return NextResponse.json(formattedData);
 }
 
-
 // POST: create a new appointment (admin only)
 export async function POST(req: NextRequest) {
   const session = await auth0.getSession(req);
@@ -36,7 +35,7 @@ export async function POST(req: NextRequest) {
   if (!name || !date || !time) {
     return NextResponse.json(
       { error: 'Missing required fields: name, date, and time are required.' },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -68,7 +67,7 @@ export async function PUT(req: NextRequest) {
   if (!id || !name || !date || !time) {
     return NextResponse.json(
       { error: 'Missing required fields: id, name, date, and time are required!' },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -102,10 +101,7 @@ export async function DELETE(req: NextRequest) {
     return NextResponse.json({ error: 'Missing appointment ID' }, { status: 400 });
   }
 
-  const { error } = await supabaseAdmin
-    .from('appointments')
-    .delete()
-    .eq('id', id);
+  const { error } = await supabaseAdmin.from('appointments').delete().eq('id', id);
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });

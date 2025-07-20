@@ -9,7 +9,7 @@ export async function GET() {
     .from('blocked_times')
     .select('*')
     .order('date', { ascending: true })
-    .order('start_time', { ascending: true});
+    .order('start_time', { ascending: true });
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
@@ -32,10 +32,10 @@ export async function POST(req: NextRequest) {
 
   const body = await req.json();
   const {
-    startDate,   // required, e.g. "2025-07-10"
-    startTime,   // required, e.g. "13:00"
-    endTime,     // required, e.g. "14:00"
-    reason       // optional
+    startDate, // required, e.g. "2025-07-10"
+    startTime, // required, e.g. "13:00"
+    endTime, // required, e.g. "14:00"
+    reason, // optional
   } = body;
 
   if (!startDate || !startTime || !endTime) {
@@ -52,14 +52,14 @@ export async function POST(req: NextRequest) {
 
   const { data, error } = await supabaseAdmin
     .from('blocked_times')
-    .insert(block)   // insert single block
+    .insert(block) // insert single block
     .select();
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  return NextResponse.json(data[0]);  // return single blocked time
+  return NextResponse.json(data[0]); // return single blocked time
 }
 
 // PUT: update a blocked time (admin only)
@@ -79,10 +79,10 @@ export async function PUT(req: NextRequest) {
   const { data, error } = await supabaseAdmin
     .from('blocked_times')
     .update({
-      date,         
+      date,
       start_time,
       end_time,
-      reason, 
+      reason,
     })
     .eq('id', id)
     .select();
@@ -94,14 +94,13 @@ export async function PUT(req: NextRequest) {
 
   const formatted = {
     ...data[0],
-    id: String(data[0].id),                         // Ensure consistent string ID
+    id: String(data[0].id), // Ensure consistent string ID
     start_time: formatTimeTo12Hour(data[0].start_time),
     end_time: formatTimeTo12Hour(data[0].end_time),
   };
 
   return NextResponse.json(formatted);
 }
-
 
 // DELETE: remove a single blocked time by ID (admin only)
 export async function DELETE(req: NextRequest) {
@@ -117,10 +116,7 @@ export async function DELETE(req: NextRequest) {
     return NextResponse.json({ error: 'Missing block ID' }, { status: 400 });
   }
 
-  const { error } = await supabaseAdmin
-    .from('blocked_times')
-    .delete()
-    .eq('id', id);
+  const { error } = await supabaseAdmin.from('blocked_times').delete().eq('id', id);
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });

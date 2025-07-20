@@ -8,7 +8,7 @@ import {
   DialogActions,
   TextField,
   Box,
-  Alert
+  Alert,
 } from '@mui/material';
 import { DatePicker, TimePicker } from '@mui/x-date-pickers';
 import { useState } from 'react';
@@ -73,30 +73,29 @@ export default function BlockTimeButton({
     }
   };
 
-const blockWholeDay = () => {
-  if (!date || !availability) return;
+  const blockWholeDay = () => {
+    if (!date || !availability) return;
 
-  const isWeekend = [0, 6].includes(date.getDay());
-  const timeWindow = isWeekend ? availability.weekends : availability.weekdays;
+    const isWeekend = [0, 6].includes(date.getDay());
+    const timeWindow = isWeekend ? availability.weekends : availability.weekdays;
 
-  if (!timeWindow?.start || !timeWindow?.end) {
-    setError('Availability configuration missing.');
-    return;
-  }
+    if (!timeWindow?.start || !timeWindow?.end) {
+      setError('Availability configuration missing.');
+      return;
+    }
 
-  const [startH, startM] = parseTimeTo24Hour(timeWindow.start);
-  const [endH, endM] = parseTimeTo24Hour(timeWindow.end);
+    const [startH, startM] = parseTimeTo24Hour(timeWindow.start);
+    const [endH, endM] = parseTimeTo24Hour(timeWindow.end);
 
-  const start = new Date(date);
-  start.setHours(startH, startM, 0, 0);
+    const start = new Date(date);
+    start.setHours(startH, startM, 0, 0);
 
-  const end = new Date(date);
-  end.setHours(endH, endM, 0, 0);
+    const end = new Date(date);
+    end.setHours(endH, endM, 0, 0);
 
-  setStartTime(start);
-  setEndTime(end);
-};
-
+    setStartTime(start);
+    setEndTime(end);
+  };
 
   const resetForm = () => {
     setStartTime(null);
@@ -122,12 +121,7 @@ const blockWholeDay = () => {
               onChange={setStartTime}
               minutesStep={30}
             />
-            <TimePicker
-              label="End Time"
-              value={endTime}
-              onChange={setEndTime}
-              minutesStep={30}
-            />
+            <TimePicker label="End Time" value={endTime} onChange={setEndTime} minutesStep={30} />
             <TextField
               label="Reason (optional)"
               value={reason}

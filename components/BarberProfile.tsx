@@ -2,14 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Slider from 'react-slick';
-import {
-  Box,
-  Typography,
-  IconButton,
-  Chip,
-  Tooltip,
-  Snackbar,
-} from '@mui/material';
+import { Box, Typography, IconButton, Chip, Tooltip, Snackbar } from '@mui/material';
 import PhoneIcon from '@mui/icons-material/Phone';
 import InstagramIcon from '@mui/icons-material/Instagram';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
@@ -17,15 +10,12 @@ import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import client from '@/lib/sanityClient';
 import Image from 'next/image';
 import dynamic from 'next/dynamic';
-const Player = dynamic(
-  () => import('@lottiefiles/react-lottie-player').then(mod => mod.Player),
-  { ssr: false }
-);
-import loadingAnimation from "@/lottiefiles/Barber's Pole.json"; 
-
+const Player = dynamic(() => import('@lottiefiles/react-lottie-player').then((mod) => mod.Player), {
+  ssr: false,
+});
+import loadingAnimation from "@/lottiefiles/Barber's Pole.json";
 
 export default function BarberProfile() {
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [sliderRef, setSliderRef] = useState<any>(null);
   const [galleryImages, setGalleryImages] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -44,14 +34,14 @@ export default function BarberProfile() {
             data
               .flatMap((gallery: any) => gallery.images || [])
               .map((img: any) => img.asset?.url)
-              .filter(Boolean)
-          )
+              .filter(Boolean),
+          ),
         );
 
         setGalleryImages(urls);
       } catch (err) {
         console.error('Sanity fetch failed.', err);
-        setGalleryImages([]); 
+        setGalleryImages([]);
       } finally {
         setLoading(false);
       }
@@ -118,17 +108,12 @@ export default function BarberProfile() {
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center',
-              backgroundColor: '#eee'
+              backgroundColor: '#eee',
             }}
           >
-          <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', py: 5 }}>
-            <Player
-              autoplay
-              loop
-              src={loadingAnimation}
-              style={{ height: 120, width: 120 }}
-            />
-          </Box>
+            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', py: 5 }}>
+              <Player autoplay loop src={loadingAnimation} style={{ height: 120, width: 120 }} />
+            </Box>
           </Box>
         ) : galleryImages.length === 0 ? (
           <Box
@@ -228,7 +213,15 @@ export default function BarberProfile() {
 
       {/* Details Section */}
       <Box px={2} pt={2}>
-        {['Full Service Barber', 'Fades', 'Tapers', 'Shears', 'Face Tune Up', 'Beards', 'Hair Enhancements'].map((label) => (
+        {[
+          'Full Service Barber',
+          'Fades',
+          'Tapers',
+          'Shears',
+          'Face Tune Up',
+          'Beards',
+          'Hair Enhancements',
+        ].map((label) => (
           <Chip
             key={label}
             label={label}
@@ -241,12 +234,7 @@ export default function BarberProfile() {
           <Box display="flex" alignItems="right" gap={1}>
             <Box>
               <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-                <Image
-                  src="/images/client.png"
-                  alt="Client Logo"
-                  width={125}
-                  height={125}
-                />
+                <Image src="/images/client.png" alt="Client Logo" width={125} height={125} />
               </Box>
             </Box>
             <Typography color="text.secondary" fontSize="14px">

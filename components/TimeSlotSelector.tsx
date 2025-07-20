@@ -25,7 +25,7 @@ interface TimeSlotSelectorProps {
   availability: Availability | null;
   selectedDay: Dayjs;
   blockedTimes: string[];
-  selectedTime: string;                   // <--- NEW PROP
+  selectedTime: string; 
   onSelectTime: (time: string) => void;
 }
 
@@ -34,7 +34,7 @@ export default function TimeSlotSelector({
   availability,
   selectedDay,
   blockedTimes,
-  selectedTime,                           // <--- NEW PROP
+  selectedTime, // <--- NEW PROP
   onSelectTime,
 }: TimeSlotSelectorProps) {
   const isWeekend = selectedDay.day() === 0 || selectedDay.day() === 6;
@@ -52,11 +52,11 @@ export default function TimeSlotSelector({
     return parsed.isValid() ? parsed.format(format) : time.trim().toLowerCase();
   };
 
-  const blockedSet = new Set(blockedTimes.map(t => normalizeTime(t)));
+  const blockedSet = new Set(blockedTimes.map((t) => normalizeTime(t)));
   const normalizedSelected = normalizeTime(selectedTime);
 
   const slotsToRender = window
-    ? timeSlots.filter(slot => {
+    ? timeSlots.filter((slot) => {
         const pSlot = dayjs(slot, format);
         const pStart = dayjs(window.start, format);
         const pEnd = dayjs(window.end, format);
@@ -79,7 +79,7 @@ export default function TimeSlotSelector({
 
   return (
     <Box sx={{ display: 'flex', overflowX: 'auto', gap: 1, mb: 5 }}>
-      {slotsToRender.map(time => {
+      {slotsToRender.map((time) => {
         const normalizedSlot = normalizeTime(time);
         const isBlocked = blockedSet.has(normalizedSlot);
         const isSelected = normalizedSlot === normalizedSelected;

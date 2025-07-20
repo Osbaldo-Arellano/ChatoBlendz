@@ -1,8 +1,8 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { serialize } from 'cookie';
 
-export async function GET(req: NextRequest) {
-  const baseUrl = process.env.AUTH0_ISSUER_BASE_URL; 
+export async function GET() {
+  const baseUrl = process.env.AUTH0_ISSUER_BASE_URL;
   const clientId = process.env.AUTH0_CLIENT_ID!;
   const returnTo = encodeURIComponent('localhost:3000/'); //https://chato-blendz.vercel.app
 
@@ -18,7 +18,7 @@ export async function GET(req: NextRequest) {
       expires: new Date(0),
       httpOnly: true,
       sameSite: 'lax',
-    })
+    }),
   );
 
   return response;

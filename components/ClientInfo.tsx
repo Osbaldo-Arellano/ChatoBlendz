@@ -103,31 +103,24 @@ export default function ClientInfoModal({
             fullWidth
             variant="outlined"
             value={phone}
-            onChange={(e) => setPhone(e.target.value)}
+            onChange={(e) => setPhone(e.target.value.replace(/^\+1/, ''))} // remove +1 on input
             type="tel"
             placeholder="(555) 123-4567"
           />
         </Box>
 
+
         <FormControlLabel
           sx={{ mb: 3 }}
           control={
-            <Checkbox
-              checked={smsReminder}
-              onChange={(e) => setSmsReminder(e.target.checked)}
-            />
+            <Checkbox checked={smsReminder} onChange={(e) => setSmsReminder(e.target.checked)} />
           }
           label="Send me a text reminder"
         />
       </DialogContent>
 
       <DialogActions sx={{ px: 3, pb: 3 }}>
-        <Button
-          variant="outlined"
-          fullWidth
-          onClick={onBack}
-          sx={{ borderRadius: 2 }}
-        >
+        <Button variant="outlined" fullWidth onClick={onBack} sx={{ borderRadius: 2 }}>
           Back
         </Button>
 
@@ -135,7 +128,7 @@ export default function ClientInfoModal({
           variant="contained"
           fullWidth
           onClick={handleSubmit}
-          sx={{ borderRadius: 2, background:"black" }}
+          sx={{ borderRadius: 2, background: 'black' }}
         >
           Continue to Confirmation
         </Button>

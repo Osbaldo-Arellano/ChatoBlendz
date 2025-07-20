@@ -17,25 +17,23 @@ import {
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import dynamic from 'next/dynamic';
-const Player = dynamic(
-  () => import('@lottiefiles/react-lottie-player').then(mod => mod.Player),
-  { ssr: false }
-);
-import loadingAnimation from "@/lottiefiles/Barber's Pole.json"; 
-
+const Player = dynamic(() => import('@lottiefiles/react-lottie-player').then((mod) => mod.Player), {
+  ssr: false,
+});
+import loadingAnimation from "@/lottiefiles/Barber's Pole.json";
 
 const fallbackSpecials = [
   {
-    name: "Skin Fade + Beard Trim",
-    description: "Our most booked service — includes razor finish and hot towel.",
+    name: 'Skin Fade + Beard Trim',
+    description: 'Our most booked service — includes razor finish and hot towel.',
     price: 30,
-    duration: "1hr 30min",
+    duration: '1hr 30min',
   },
   {
-    name: "Premium Full Service",
-    description: "Haircut, beard sculpting, and black mask treatment.",
+    name: 'Premium Full Service',
+    description: 'Haircut, beard sculpting, and black mask treatment.',
     price: 40,
-    duration: "2hr",
+    duration: '2hr',
   },
 ];
 
@@ -66,7 +64,7 @@ export default function HighlightList({ onSelect }: { onSelect: (service: any) =
           setSpecials(data.services);
         }
       } catch (error) {
-        console.error("Sanity fetch failed, using fallback specials:", error);
+        console.error('Sanity fetch failed, using fallback specials:', error);
         setSpecials(fallbackSpecials);
       } finally {
         setLoading(false);
@@ -86,8 +84,12 @@ export default function HighlightList({ onSelect }: { onSelect: (service: any) =
         sx={{ cursor: 'pointer', mb: 1, ml: 1, mt: 3 }}
       >
         <Box>
-          <Typography variant="h6" fontWeight="bold" color="text.secondary">Barber&apos;s Specials</Typography>
-          <Typography variant="subtitle2" fontWeight="medium" color="text.secondary">Specialty Cuts</Typography>
+          <Typography variant="h6" fontWeight="bold" color="text.secondary">
+            Barber&apos;s Specials
+          </Typography>
+          <Typography variant="subtitle2" fontWeight="medium" color="text.secondary">
+            Specialty Cuts
+          </Typography>
         </Box>
         <IconButton size="small">
           <ExpandMoreIcon
@@ -102,17 +104,15 @@ export default function HighlightList({ onSelect }: { onSelect: (service: any) =
       <Collapse in={open}>
         <Box mt={2}>
           {loading ? (
-        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', py: 5 }}>
-          <Player
-            autoplay
-            loop
-            src={loadingAnimation}
-            style={{ height: 120, width: 120 }}
-          />
-        </Box>
+            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', py: 5 }}>
+              <Player autoplay loop src={loadingAnimation} style={{ height: 120, width: 120 }} />
+            </Box>
           ) : (
-            specials.map(special => (
-              <Card key={special._id || special.name} sx={{ borderRadius: 0, borderBottom: '1px dashed #ccc' }}>
+            specials.map((special) => (
+              <Card
+                key={special._id || special.name}
+                sx={{ borderRadius: 0, borderBottom: '1px dashed #ccc' }}
+              >
                 <CardContent sx={{ py: 2 }}>
                   <Grid container spacing={2} alignItems="center">
                     <Grid size={{ xs: 7, sm: 5 }}>
