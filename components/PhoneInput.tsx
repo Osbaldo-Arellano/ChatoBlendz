@@ -14,6 +14,8 @@ const PhoneInput = forwardRef<HTMLInputElement, InputMaskProps>((props, ref) => 
   );
 });
 
+PhoneInput.displayName = 'PhoneInput';
+
 // Usage inside your component
 export default function PhoneNumberField({
   value,
