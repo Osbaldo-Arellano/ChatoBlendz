@@ -8,7 +8,6 @@ export default function Page() {
       <MobileOnlyWrapper>
         <BookingPage />
       </MobileOnlyWrapper>
-
     </Suspense>
   );
 }

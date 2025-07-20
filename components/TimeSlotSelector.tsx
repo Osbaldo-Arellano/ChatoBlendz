@@ -34,7 +34,7 @@ export default function TimeSlotSelector({
   availability,
   selectedDay,
   blockedTimes,
-  selectedTime, // <--- NEW PROP
+  selectedTime,
   onSelectTime,
 }: TimeSlotSelectorProps) {
   const isWeekend = selectedDay.day() === 0 || selectedDay.day() === 6;
