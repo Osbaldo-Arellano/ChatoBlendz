@@ -5,12 +5,12 @@ import { DateTime } from 'luxon';
 function to12Hour(timeStr: string) {
   console.log(`⏳ Converting to 12-hour format: ${timeStr}`);
   const [hours, minutes] = timeStr.split(':');
-  const formatted = new Date(`1970-01-01T${hours.padStart(2, '0')}:${minutes.padStart(2, '0')}:00`).toLocaleTimeString('en-US', {
-    hour: 'numeric',
-    minute: '2-digit',
-    hour12: true,
-    timeZone: 'America/Los_Angeles',
-  });
+
+  const formatted = DateTime.fromObject(
+    { hour: parseInt(hours), minute: parseInt(minutes) },
+    { zone: 'America/Los_Angeles' }
+  ).toFormat('h:mm a');
+
   console.log(`✅ Converted: ${formatted}`);
   return formatted;
 }
