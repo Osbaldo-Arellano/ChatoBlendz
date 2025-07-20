@@ -28,7 +28,8 @@ export default function SuccessPage() {
         >
             <Player
                 autoplay
-                loop
+                loop={false}
+                keepLastFrame={true}
                 src={successAnimation}
                 style={{ height: 200, width: 200 }}
             />

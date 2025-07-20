@@ -16,7 +16,7 @@ import {
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import dayjs, { Dayjs } from 'dayjs';
-import { useEffect, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import AdditionalServicesModal from '@/components/AddtionalServices';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
@@ -28,6 +28,7 @@ import client from '@/lib/sanityClient';
 import TimeSlotSelector from './TimeSlotSelector';
 import { useRouter } from 'next/navigation';
 import FullscreenLoading from './FullscreenLoading';
+import PhoneNumberField from './PhoneInput';
 
 
 dayjs.extend(isSameOrAfter);
@@ -126,7 +127,6 @@ export default function CombinedBookingModal({
   const [availability, setAvailability] = useState<Availability | null>(null);
   const [bookingSuccess, setBookingSuccess] = useState(false);
   const [bookingInProgress, setBookingInProgress] = useState(false);
-
 
   const totalPrice =
     (selectedService?.price ?? 0) + selectedAddons.reduce((sum, a) => sum + a.price, 0);
@@ -405,15 +405,11 @@ export default function CombinedBookingModal({
               onChange={(e) => setClientInfo({ ...clientInfo, name: e.target.value })}
               sx={{ mb: 2 }}
             />
-            <PhoneInput
+            <PhoneNumberField
               value={clientInfo.phone}
-              onChange={(value) => {
-                const sanitizedValue = (value || '').replace(/^\+1/, ''); // remove +1 prefix if present
-                setClientInfo({ ...clientInfo, phone: sanitizedValue });
-              }}
-              placeholder="(555) 555-5555"
-              className="phone-input"
+              onChange={(val) => setClientInfo({ ...clientInfo, phone: val })}
             />
+
 
             <FormControlLabel
               control={

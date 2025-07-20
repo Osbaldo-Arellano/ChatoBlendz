@@ -1,21 +1,37 @@
-'use client';
-
-import { InputMask } from '@react-input/mask';
 import { forwardRef } from 'react';
+import { InputMask, type InputMaskProps } from '@react-input/mask';
 import { TextField } from '@mui/material';
 
-const PhoneInput = forwardRef<HTMLInputElement, any>((props, ref) => {
+// Wrap InputMask in a forwardRef to pass to MUI
+const PhoneInput = forwardRef<HTMLInputElement, InputMaskProps>((props, ref) => {
   return (
     <InputMask
-      mask="(___) ___-____"
-      replacement={{ _: /\d/ }}
       {...props}
-      component={TextField}
-      inputRef={ref}
+      ref={ref}
+      mask="(###) ###-####"
+      replacement={{ '#': /\d/ }}
     />
   );
 });
 
-PhoneInput.displayName = 'PhoneInput';
-
-export default PhoneInput;
+// Usage inside your component
+export default function PhoneNumberField({
+  value,
+  onChange,
+}: {
+  value: string;
+  onChange: (val: string) => void;
+}) {
+  return (
+    <TextField
+      label="Phone Number"
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      placeholder="(555) 555-5555"
+      InputProps={{
+        inputComponent: PhoneInput as any, // MUI expects component in inputComponent
+      }}
+      fullWidth
+    />
+  );
+}

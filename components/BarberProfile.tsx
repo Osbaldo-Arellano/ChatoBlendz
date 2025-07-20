@@ -94,7 +94,7 @@ export default function BarberProfile() {
   return (
     <Box
       sx={{
-        background: 'linear-gradient(to bottom,rgb(151, 151, 151),rgb(255, 255, 255))',
+        background: 'white',
         mx: 'auto',
         pb: 3,
       }}
@@ -220,13 +220,12 @@ export default function BarberProfile() {
           'Shears',
           'Face Tune Up',
           'Beards',
-          'Hair Enhancements',
         ].map((label) => (
           <Chip
             key={label}
             label={label}
             size="small"
-            sx={{ mb: 1, backgroundColor: '#f1f1f1', fontWeight: '500' }}
+            sx={{ mb: 1, ml: .5, backgroundColor: '#f1f1f1', fontWeight: '500' }}
           />
         ))}
 
@@ -237,9 +236,16 @@ export default function BarberProfile() {
                 <Image src="/images/client.png" alt="Client Logo" width={125} height={125} />
               </Box>
             </Box>
-            <Typography color="text.secondary" fontSize="14px">
-              Serving the Salem, Woodburn, and Portland area.
+            <Typography
+              color="text.secondary"
+              fontSize="15px"
+              fontWeight={300}
+              textAlign="left"
+              lineHeight={1.6}
+            >
+              Proudly serving the Salem, Woodburn, and Portland areas.
             </Typography>
+
 
             <Tooltip title="Call now">
               <IconButton component="a" href="tel:+17145551234">
