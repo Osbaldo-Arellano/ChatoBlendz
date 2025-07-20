@@ -26,6 +26,9 @@ import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
 import client from '@/lib/sanityClient';
 import TimeSlotSelector from './TimeSlotSelector';
+import { useRouter } from 'next/navigation';
+import FullscreenLoading from './FullscreenLoading';
+
 
 dayjs.extend(isSameOrAfter);
 dayjs.extend(isSameOrBefore);
@@ -105,6 +108,8 @@ export default function CombinedBookingModal({
   onClose,
   selectedService,
 }: BookingModalProps) {
+  const router = useRouter();
+
   const [step, setStep] = useState<'calendar' | 'clientInfo' | 'confirmation'>('calendar');
   const [days, setDays] = useState<Dayjs[]>([...Array(14)].map((_, i) => dayjs().add(i, 'day')));
   const [selectedDay, setSelectedDay] = useState<Dayjs>(dayjs());
@@ -120,6 +125,7 @@ export default function CombinedBookingModal({
   const [blockedTimes, setBlockedTimes] = useState<string[]>([]);
   const [availability, setAvailability] = useState<Availability | null>(null);
   const [bookingSuccess, setBookingSuccess] = useState(false);
+  const [bookingInProgress, setBookingInProgress] = useState(false);
 
 
   const totalPrice =
@@ -214,6 +220,8 @@ export default function CombinedBookingModal({
   };
 
   async function handleConfirmBooking() {
+    setBookingInProgress(true);  // <-- Start showing the FullscreenLoading
+
     const payload = {
       date: selectedDay.format('YYYY-MM-DD'),
       startTime: selectedTime,
@@ -239,15 +247,16 @@ export default function CombinedBookingModal({
       setBookingSuccess(true);
 
       setTimeout(() => {
-        setBookingSuccess(false);
-        handleClose();
-      }, 2000);
+        router.push('/success');
+      }, 3500);
 
     } catch (err) {
       console.error(err);
       alert('Failed to schedule appointment. Please try again.');
+      setBookingInProgress(false);
     }
   }
+
 
 
   return (
@@ -398,10 +407,14 @@ export default function CombinedBookingModal({
             />
             <PhoneInput
               value={clientInfo.phone}
-              onChange={(value) => setClientInfo({ ...clientInfo, phone: value || '' })}
+              onChange={(value) => {
+                const sanitizedValue = (value || '').replace(/^\+1/, ''); // remove +1 prefix if present
+                setClientInfo({ ...clientInfo, phone: sanitizedValue });
+              }}
               placeholder="(555) 555-5555"
               className="phone-input"
             />
+
             <FormControlLabel
               control={
                 <Checkbox
@@ -519,6 +532,9 @@ export default function CombinedBookingModal({
         selected={selectedAddons}
         onSelect={setSelectedAddons}
       />
+
+      {bookingInProgress && <FullscreenLoading />}
+
     </Dialog>
   );
 }

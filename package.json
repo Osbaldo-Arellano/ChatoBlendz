@@ -29,6 +29,7 @@
     "date-fns": "^4.1.0",
     "dayjs": "^1.11.13",
     "lottie-react": "^2.4.1",
+    "luxon": "^3.7.1",
     "next": "15.3.4",
     "prisma": "^6.10.1",
     "react": "^19.0.0",
@@ -40,6 +41,7 @@
   "devDependencies": {
     "@auth0/nextjs-auth0": "^4.7.0",
     "@tailwindcss/postcss": "^4",
+    "@types/luxon": "^3.6.2",
     "@types/node": "^20.19.1",
     "@types/react": "^19",
     "@types/react-dom": "^19",

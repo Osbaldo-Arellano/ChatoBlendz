@@ -9,12 +9,19 @@ import BlockTimeButton from './BlockTimeButton';
 import client from '@/lib/sanityClient';
 
 export type Appointment = {
-  id: string;
+  id: string | number;
   name: string;
   service: string;
+  service_name?: string;
   date: string;
-  time: string;
+  start_time: string;
+  phone_number?: string;
+  price?: number;
+  addons?: any; // or a proper Addon[] type if structured
+  total_price?: number;
+  sms_reminder?: string;
 };
+
 
 export type BlockedTime = {
   id: string;
@@ -69,7 +76,7 @@ export default function AppointmentCalendarClient() {
     }
   }
 
-  async function handleDelete(id: string) {
+  async function handleDelete(id: string | number) {
     if (!confirm('Are you sure?')) return;
 
     const res = await fetch('/api/admin/appointments', {
@@ -99,7 +106,7 @@ export default function AppointmentCalendarClient() {
     }
   }
 
-  async function handleBlockDelete(id: string) {
+  async function handleBlockDelete(id: string | number) {
     if (!confirm('Delete this blocked time?')) return;
 
     const res = await fetch('/api/admin/blocked-times', {
@@ -156,6 +163,7 @@ export default function AppointmentCalendarClient() {
         onBlockDelete={handleBlockDelete}
         onBlockUpdate={handleBlockUpdate}
       />
+
     </LocalizationProvider>
   );
 }

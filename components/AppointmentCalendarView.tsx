@@ -1,6 +1,14 @@
 'use client';
 
-import { Box, Paper, Typography, Divider, IconButton, Stack, Fab } from '@mui/material';
+import {
+  Box,
+  Paper,
+  Typography,
+  Divider,
+  IconButton,
+  Stack,
+  Fab,
+} from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
@@ -8,6 +16,7 @@ import { Appointment, BlockedTime } from './AppointmentCalendarClient';
 import { useMemo, useRef, useEffect, useState, useCallback } from 'react';
 import { addDays, format } from 'date-fns';
 import BlockedTimeDialog from './BlockedTimeDialog';
+import AppointmentEditDialog from './AppointmentEditDialog';
 
 const DAYS_PER_PAGE = 14;
 
@@ -21,12 +30,13 @@ export default function AppointmentCalendarView({
 }: {
   appointments: Appointment[];
   blockedTimes: BlockedTime[];
-  onDelete: (id: string) => void;
-  onUpdate: (updated: Appointment) => void;
-  onBlockDelete: (id: string) => void;
-  onBlockUpdate: (updated: BlockedTime) => void;
+  onDelete: (id: string | number) => void | Promise<void>;
+  onUpdate: (updated: Appointment) => void | Promise<void>;
+  onBlockDelete: (id: string | number) => void | Promise<void>;
+  onBlockUpdate: (updated: BlockedTime) => void | Promise<void>;
 }) {
   const [editingBlock, setEditingBlock] = useState<BlockedTime | null>(null);
+  const [editingAppointment, setEditingAppointment] = useState<Appointment | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [visibleDays, setVisibleDays] = useState(DAYS_PER_PAGE);
   const [showScrollTop, setShowScrollTop] = useState(false);
@@ -36,12 +46,8 @@ export default function AppointmentCalendarView({
   const handleScroll = useCallback(() => {
     const el = containerRef.current;
     if (!el) return;
-
     const nearBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - 50;
-    if (nearBottom) {
-      setVisibleDays((prev) => prev + DAYS_PER_PAGE);
-    }
-
+    if (nearBottom) setVisibleDays((prev) => prev + DAYS_PER_PAGE);
     setShowScrollTop(el.scrollTop > 300);
   }, []);
 
@@ -163,26 +169,24 @@ export default function AppointmentCalendarView({
                     <Box>
                       <Typography fontWeight="bold">{appt.name}</Typography>
                       <Typography variant="body2" color="text.secondary">
-                        {appt.service}
+                        {appt.service_name || appt.service}
                       </Typography>
-                      <Typography variant="body2">{appt.time}</Typography>
+                      <Typography variant="body2">{appt.start_time}</Typography>
+                      {appt.total_price && (
+                        <Typography variant="body2" color="text.secondary">
+                          Total: ${Number(appt.total_price).toFixed(2)}
+                        </Typography>
+                      )}
                     </Box>
 
                     <Stack direction="row" spacing={1}>
                       <IconButton
                         aria-label="edit"
                         color="primary"
-                        onClick={() => {
-                          const updated = {
-                            ...appt,
-                            name: prompt('Edit name', appt.name) || appt.name,
-                          };
-                          onUpdate(updated);
-                        }}
+                        onClick={() => setEditingAppointment(appt)}
                       >
                         <EditIcon />
                       </IconButton>
-
                       <IconButton
                         aria-label="delete"
                         color="error"
@@ -227,6 +231,18 @@ export default function AppointmentCalendarView({
           onSave={(updatedBlock) => {
             onBlockUpdate(updatedBlock);
             setEditingBlock(null);
+          }}
+        />
+      )}
+
+      {editingAppointment && (
+        <AppointmentEditDialog
+          open={true}
+          appointment={editingAppointment}
+          onClose={() => setEditingAppointment(null)}
+          onSave={(updated) => {
+            onUpdate(updated);
+            setEditingAppointment(null);
           }}
         />
       )}

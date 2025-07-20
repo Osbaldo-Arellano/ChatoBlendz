@@ -25,6 +25,24 @@ export async function POST(req: NextRequest) {
     );
   }
 
+  // Check if time slot is already booked
+  const { data: existingAppointments, error: checkError } = await supabaseAdmin
+    .from('appointments')
+    .select('id')
+    .eq('date', date)
+    .eq('start_time', startTime);
+
+  if (checkError) {
+    return NextResponse.json({ error: 'Failed to check availability.' }, { status: 500 });
+  }
+
+  if (existingAppointments && existingAppointments.length > 0) {
+    return NextResponse.json(
+      { error: 'This time slot is already booked. Please select another time.' },
+      { status: 409 } // Conflict
+    );
+  }
+
   // Build appointment object
   const appointment = {
     name: clientName,

@@ -97,15 +97,19 @@ export default function ClientInfoModal({
           />
         </Box>
 
-        <Box mb={3}>
+        <Box m={3}>
           <TextField
             label="Phone Number"
             fullWidth
             variant="outlined"
             value={phone}
-            onChange={(e) => setPhone(e.target.value.replace(/^\+1/, ''))} // remove +1 on input
+            onChange={(e) => {
+              const rawValue = e.target.value;
+              const sanitizedValue = rawValue.replace(/^(\+1\s*|\+1)/, ''); // removes +1 and optional spaces after
+              setPhone(sanitizedValue);
+            }}
             type="tel"
-            placeholder="(555) 123-4567"
+            placeholder="(503) 123-4567"
           />
         </Box>
 
