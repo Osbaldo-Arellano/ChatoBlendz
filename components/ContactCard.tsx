@@ -7,29 +7,40 @@ import {
   IconButton,
   Link,
   Paper,
+  Divider,
 } from '@mui/material';
 import PhoneIcon from '@mui/icons-material/Phone';
 import EmailIcon from '@mui/icons-material/Email';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import InstagramIcon from '@mui/icons-material/Instagram';
-import LanguageIcon from '@mui/icons-material/Language';
 
 export default function ContactCard() {
   return (
+    <>
+    <Box display="flex"
+      justifyContent="space-between"
+      alignItems="center"
+      sx={{ cursor: 'pointer', mb: 1, ml: 1, mt: 3  }}>
+      <Box>
+          <Typography variant="h6" fontWeight="bold" color="text.secondary">Contact Me</Typography>
+          <Typography variant="subtitle2" fontWeight="medium" color="text.secondary"></Typography>
+      </Box>
+    </Box>
+
+    <Divider />
+
     <Paper
-      elevation={3}
       sx={{
-        maxWidth: 500,
         mx: 'auto',
-        px: 4,
-        py: 5,
+        px: 1,
+        py: 2,
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        borderRadius: 3,
-        backgroundColor: 'white',
+        background: 'none',
       }}
     >
+      
       {/* Profile Image */}
       <Avatar
         alt="Barber profile"
@@ -97,5 +108,6 @@ export default function ContactCard() {
         </IconButton>
       </Box>
     </Paper>
+        </>
   );
 }

@@ -11,12 +11,18 @@ import {
   Collapse,
   IconButton,
   Grid,
-  CircularProgress,
   Dialog,
   DialogTitle,
   DialogContent,
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import dynamic from 'next/dynamic';
+const Player = dynamic(
+  () => import('@lottiefiles/react-lottie-player').then(mod => mod.Player),
+  { ssr: false }
+);
+import loadingAnimation from "@/lottiefiles/Barber's Pole.json"; 
+
 
 const fallbackSpecials = [
   {
@@ -96,7 +102,14 @@ export default function HighlightList({ onSelect }: { onSelect: (service: any) =
       <Collapse in={open}>
         <Box mt={2}>
           {loading ? (
-            <CircularProgress />
+        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', py: 5 }}>
+          <Player
+            autoplay
+            loop
+            src={loadingAnimation}
+            style={{ height: 120, width: 120 }}
+          />
+        </Box>
           ) : (
             specials.map(special => (
               <Card key={special._id || special.name} sx={{ borderRadius: 0, borderBottom: '1px dashed #ccc' }}>

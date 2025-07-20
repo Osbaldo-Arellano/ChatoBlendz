@@ -9,15 +9,20 @@ import {
   Chip,
   Tooltip,
   Snackbar,
-  CircularProgress
 } from '@mui/material';
-import ShareIcon from '@mui/icons-material/Share';
 import PhoneIcon from '@mui/icons-material/Phone';
 import InstagramIcon from '@mui/icons-material/Instagram';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import client from '@/lib/sanityClient';
 import Image from 'next/image';
+import dynamic from 'next/dynamic';
+const Player = dynamic(
+  () => import('@lottiefiles/react-lottie-player').then(mod => mod.Player),
+  { ssr: false }
+);
+import loadingAnimation from "@/lottiefiles/Barber's Pole.json"; 
+
 
 export default function BarberProfile() {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -46,7 +51,7 @@ export default function BarberProfile() {
         setGalleryImages(urls);
       } catch (err) {
         console.error('Sanity fetch failed.', err);
-        setGalleryImages([]);  // You can show an error message instead
+        setGalleryImages([]); 
       } finally {
         setLoading(false);
       }
@@ -54,23 +59,6 @@ export default function BarberProfile() {
 
     fetchGallery();
   }, []);
-
-  const handleShare = async () => {
-    try {
-      if (navigator.share) {
-        await navigator.share({
-          title: 'Book ChatoBlendz',
-          text: 'TAP IN!',
-          url: window.location.href,
-        });
-        setSnackbarOpen(true);
-      } else {
-        alert('Sharing is not supported on this browser.');
-      }
-    } catch (err) {
-      console.error('Sharing failed:', err);
-    }
-  };
 
   const sliderSettings = {
     dots: true,
@@ -117,10 +105,8 @@ export default function BarberProfile() {
     <Box
       sx={{
         background: 'linear-gradient(to bottom,rgb(151, 151, 151),rgb(255, 255, 255))',
-        maxWidth: 600,
         mx: 'auto',
-        pb: 2,
-        mb: 2
+        pb: 3,
       }}
     >
       {/* Gallery with Loader */}
@@ -135,7 +121,14 @@ export default function BarberProfile() {
               backgroundColor: '#eee'
             }}
           >
-            <CircularProgress />
+          <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', py: 5 }}>
+            <Player
+              autoplay
+              loop
+              src={loadingAnimation}
+              style={{ height: 120, width: 120 }}
+            />
+          </Box>
           </Box>
         ) : galleryImages.length === 0 ? (
           <Box
@@ -260,19 +253,6 @@ export default function BarberProfile() {
               Serving the Salem, Woodburn, and Portland area.
             </Typography>
 
-            <Tooltip title="Share this page">
-              <IconButton
-                aria-label="Share"
-                onClick={handleShare}
-                sx={{
-                  '&:active': { transform: 'scale(0.95)' },
-                  transition: 'transform 0.1s ease-in-out',
-                }}
-              >
-                <ShareIcon />
-              </IconButton>
-            </Tooltip>
-
             <Tooltip title="Call now">
               <IconButton component="a" href="tel:+17145551234">
                 <PhoneIcon />
@@ -281,14 +261,6 @@ export default function BarberProfile() {
           </Box>
         </Box>
       </Box>
-
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={3000}
-        onClose={() => setSnackbarOpen(false)}
-        message="Thanks for sharing!"
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-      />
     </Box>
   );
 }

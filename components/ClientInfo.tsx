@@ -33,6 +33,7 @@ interface ClientInfoModalProps {
   open: boolean;
   onClose: () => void;
   onSubmit: (clientInfo: ClientInfo) => void;
+  onBack: () => void;
   selectedService: Service | null;
 }
 
@@ -40,6 +41,7 @@ export default function ClientInfoModal({
   open,
   onClose,
   onSubmit,
+  onBack,
   selectedService,
 }: ClientInfoModalProps) {
   const [name, setName] = useState('');
@@ -120,6 +122,15 @@ export default function ClientInfoModal({
       </DialogContent>
 
       <DialogActions sx={{ px: 3, pb: 3 }}>
+        <Button
+          variant="outlined"
+          fullWidth
+          onClick={onBack}
+          sx={{ borderRadius: 2 }}
+        >
+          Back
+        </Button>
+
         <Button
           variant="contained"
           fullWidth

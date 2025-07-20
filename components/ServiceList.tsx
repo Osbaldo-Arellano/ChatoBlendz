@@ -11,13 +11,17 @@ import {
   Collapse,
   IconButton,
   Grid,
-  CircularProgress,
   Dialog,
   DialogTitle,
   DialogContent,
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+import loadingAnimation from "@/lottiefiles/Barber's Pole.json"; 
+import dynamic from 'next/dynamic';
+const Player = dynamic(
+  () => import('@lottiefiles/react-lottie-player').then(mod => mod.Player),
+  { ssr: false }
+);
 
 const fallbackServices = [
   {
@@ -125,7 +129,14 @@ export default function ServiceList({ onSelect }: { onSelect: (service: any) => 
       <Collapse in={open}>
         <Box mt={2}>
           {loading ? (
-            <CircularProgress />
+        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', py: 5 }}>
+          <Player
+            autoplay
+            loop
+            src={loadingAnimation}
+            style={{ height: 120, width: 120 }}
+          />
+        </Box>
           ) : (
             services.map(service => (
               <Card key={service._id} sx={{ borderRadius: 0, borderBottom: '1px dashed #ccc' }}>

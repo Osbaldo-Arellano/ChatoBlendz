@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { CircularProgress, Box } from '@mui/material';
+import { Box } from '@mui/material';
 import AppointmentCalendarView from './AppointmentCalendarView';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';

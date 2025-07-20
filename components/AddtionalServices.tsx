@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import {
   Dialog,
@@ -13,11 +13,17 @@ import {
   IconButton,
   Typography,
   Box,
-  CircularProgress,
+  Divider,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { useState, useEffect } from 'react';
 import client from '@/lib/sanityClient';
+import dynamic from 'next/dynamic';
+const Player = dynamic(
+  () => import('@lottiefiles/react-lottie-player').then(mod => mod.Player),
+  { ssr: false }
+);
+import loadingAnimation from "@/lottiefiles/Barber's Pole.json"; 
 
 interface AdditionalService {
   id: string;
@@ -85,25 +91,37 @@ export default function AdditionalServicesModal({
   };
 
   return (
-    <Dialog open={open} onClose={onClose} fullWidth maxWidth="xs">
+    <Dialog open={open} onClose={onClose} fullWidth maxWidth="xs"
+      PaperProps={{ sx: { borderRadius: 3, backgroundColor: 'white', color: 'black' } }}
+    >
       <DialogTitle
         sx={{
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
+          fontWeight: 'bold',
+          fontSize: '1.1rem',
         }}
       >
         Add Additional Services
-        <IconButton onClick={onClose}>
+        <IconButton onClick={onClose} sx={{ color: 'black' }}>
           <CloseIcon />
         </IconButton>
       </DialogTitle>
 
+      <Divider sx={{ borderColor: '#ccc' }} />
 
       <DialogContent>
         {loading ? (
           <Box display="flex" justifyContent="center" py={4}>
-            <CircularProgress />
+            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', py: 5 }}>
+        <Player
+          autoplay
+          loop
+          src={loadingAnimation}
+          style={{ height: 120, width: 120 }}
+        />
+      </Box>
           </Box>
         ) : (
           <List>
@@ -112,14 +130,30 @@ export default function AdditionalServicesModal({
               return (
                 <ListItem
                   key={service.id}
-                  component="div"
                   onClick={() => toggleService(service)}
-                  sx={{ cursor: 'pointer' }}
+                  sx={{
+                    cursor: 'pointer',
+                    bgcolor: checked ? '#f0f0f0' : 'transparent',
+                    borderRadius: 2,
+                    mb: 1,
+                    '&:hover': { bgcolor: '#f9f9f9' },
+                  }}
+                  secondaryAction={
+                    <Typography fontWeight="bold" fontSize="0.9rem">
+                      +${service.price.toFixed(2)}
+                    </Typography>
+                  }
                 >
-                  <Checkbox checked={checked} />
+                  <Checkbox
+                    checked={checked}
+                    sx={{ color: 'black' }}
+                  />
                   <ListItemText
-                    primary={service.name}
-                    secondary={`+$${service.price.toFixed(2)}`}
+                    primary={
+                      <Typography fontWeight={checked ? 'bold' : 'medium'} color="black">
+                        {service.name}
+                      </Typography>
+                    }
                   />
                 </ListItem>
               );
@@ -127,6 +161,8 @@ export default function AdditionalServicesModal({
           </List>
         )}
       </DialogContent>
+
+      <Divider sx={{ borderColor: '#ccc' }} />
 
       <DialogActions sx={{ px: 3, pb: 2 }}>
         <Button
@@ -138,12 +174,13 @@ export default function AdditionalServicesModal({
             color: 'white',
             fontWeight: 'bold',
             textTransform: 'none',
+            borderRadius: 2,
             '&:hover': {
-              backgroundColor: '#222',
+              backgroundColor: '#333',
             },
           }}
         >
-          Save
+          Save Selections
         </Button>
       </DialogActions>
     </Dialog>

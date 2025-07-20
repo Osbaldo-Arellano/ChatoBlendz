@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { Box } from '@mui/material';
 import BarberProfile from '@/components/BarberProfile';
 import ServiceList from '@/components/ServiceList';
-import BookingCalendarModal from '@/components/BookingCalendar';
+import CombinedBookingCalendarModal from '@/components/BookingCalendar';
 import Footer from '@/components/Footer';
 import SectionNav from '@/components/SectionNav';
 import HighlightList from '@/components/HighlightList';
@@ -13,7 +13,6 @@ import Disclaimers from '@/components/Disclaimer';
 import Portfolio from './Portfolio';
 import ContactCard from './ContactCard';
 import AvailabilityCard from './Availability';
-import sanityClient from '@/lib/sanityClient';
 import client from '@/lib/sanityClient';
 
 const validTabs = ['Services', 'Details', 'Reviews', 'Portfolio'];
@@ -51,10 +50,9 @@ export default function BookingPage() {
       params.set('tab', activeTab);
       router.replace(`?${params.toString()}`, { scroll: false });
     }
-  }, [activeTab]);
+  }, [activeTab, urlTab, searchParams, router]);
+
   const [availability, setAvailability] = useState<any>(null);
-
-
 
   const renderTabContent = () => {
     switch (activeTab) {
@@ -112,8 +110,6 @@ export default function BookingPage() {
       }
     }
 
-
-
     fetchAvailability();
   }, []);
 
@@ -123,7 +119,7 @@ export default function BookingPage() {
         <BarberProfile />
         <SectionNav active={activeTab} onChange={setActiveTab} />
         {renderTabContent()}
-        <BookingCalendarModal
+        <CombinedBookingCalendarModal
           open={calendarOpen}
           onClose={() => {
             setCalendarOpen(false);
