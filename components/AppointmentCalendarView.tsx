@@ -169,9 +169,11 @@ export default function AppointmentCalendarView({
                     <Box>
                       <Typography fontWeight="bold">{appt.name}</Typography>
                       <Typography variant="body2" color="text.secondary">
-                        {appt.service_name || appt.service}
+                        {appt.service}
                       </Typography>
                       <Typography variant="body2">{appt.start_time}</Typography>
+                      <Typography variant="body2">{appt.phone_number}</Typography>
+                      <Typography variant="body2">Text Msg Reminder: {appt.sms_reminder}</Typography>
                       {appt.total_price && (
                         <Typography variant="body2" color="text.secondary">
                           Total: ${Number(appt.total_price).toFixed(2)}

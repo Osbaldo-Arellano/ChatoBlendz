@@ -14,6 +14,13 @@ const Player = dynamic(() => import('@lottiefiles/react-lottie-player').then((mo
   ssr: false,
 });
 import loadingAnimation from "@/lottiefiles/Barber's Pole.json";
+import imageUrlBuilder from '@sanity/image-url';
+
+const builder = imageUrlBuilder(client);
+
+function urlFor(source: any) {
+  return builder.image(source).url();
+}
 
 export default function BarberProfile() {
   const [sliderRef, setSliderRef] = useState<any>(null);
@@ -21,33 +28,19 @@ export default function BarberProfile() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function fetchGallery() {
-      try {
-        const data = await client.fetch(`
-          *[_type == "gallery"] {
-            images[]{ asset->{ url } }
-          }
-        `);
+    const fetchImages = async () => {
+      const query = `*[_type == "gallery" && title == "Header"][0].images`;
+      const result = await client.fetch(query);
 
-        const urls = Array.from(
-          new Set(
-            data
-              .flatMap((gallery: any) => gallery.images || [])
-              .map((img: any) => img.asset?.url)
-              .filter(Boolean),
-          ),
-        );
-
+      if (result && Array.isArray(result)) {
+        const urls = result.map((img: any) => urlFor(img.asset));
         setGalleryImages(urls);
-      } catch (err) {
-        console.error('Sanity fetch failed.', err);
-        setGalleryImages([]);
-      } finally {
-        setLoading(false);
       }
-    }
 
-    fetchGallery();
+      setLoading(false);
+    };
+
+    fetchImages();
   }, []);
 
   const sliderSettings = {

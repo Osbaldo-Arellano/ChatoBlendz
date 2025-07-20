@@ -1,56 +1,76 @@
 'use client';
 
-import { useState } from 'react';
-import {
-  Box,
-  Typography,
-  Button,
-  Card,
-  CardMedia,
-  IconButton,
-  Collapse,
-} from '@mui/material';
+import { useEffect, useState } from 'react';
+import { Box, Typography, Button, Card, CardMedia, IconButton, Collapse } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import imageUrlBuilder from '@sanity/image-url';
+import client from '@/lib/sanityClient';
+import dynamic from 'next/dynamic';
+import { useRef } from 'react';
 
-const imageList = [
-  '/images/2.jpg',
-  '/images/4.jpg',
-  '/images/3.jpg',
-  '/images/5.jpg',
-  '/images/1.jpg',
-  '/images/6.jpg',
-];
+// Dynamic import to prevent SSR issues
+const Lottie = dynamic(() => import('lottie-react'), { ssr: false });
+import barberPole from "@/lottiefiles/Barber's Pole.json"; // replace with your actual path
 
-const videoList = [
-  '/videos/clip1.mp4',
-  '/videos/clip2.mp4',
-  '/videos/clip3.mp4',
-  '/videos/clip4.mp4',
-];
+const builder = imageUrlBuilder(client);
+
+function urlFor(source: any) {
+  return builder.image(source).url();
+}
 
 const IMAGES_PER_LOAD = 5;
-const VIDEOS_PER_LOAD = 2;
 
 export default function GalleryList() {
   const [galleryOpen, setGalleryOpen] = useState(true);
-  const [videosOpen, setVideosOpen] = useState(false);
+  const [images, setImages] = useState<string[]>([]);
   const [visibleImageCount, setVisibleImageCount] = useState(IMAGES_PER_LOAD);
-  const [visibleVideoCount, setVisibleVideoCount] = useState(VIDEOS_PER_LOAD);
+  const [loadingImages, setLoadingImages] = useState<Record<number, boolean>>({});
+  // Inside your component
+  const imageRefs = useRef<Record<number, HTMLImageElement | null>>({});
+
+  // When images update (or on mount), check if any images are already loaded
+  useEffect(() => {
+    Object.entries(imageRefs.current).forEach(([index, img]) => {
+      if (img && img.complete) {
+        handleImageLoad(Number(index));
+      }
+    });
+  }, [images]);
+
+  useEffect(() => {
+    const fetchImages = async () => {
+      const query = `*[_type == "gallery" && title == "Portfolio"][0].images`;
+      const result = await client.fetch(query);
+
+      if (result && Array.isArray(result)) {
+        const urls = result.map((img: any) => urlFor(img.asset));
+        setImages(urls);
+
+        // Initialize loading state for each image
+        const initialLoadingState: Record<number, boolean> = {};
+        urls.forEach((_, idx) => {
+          initialLoadingState[idx] = true;
+        });
+        setLoadingImages(initialLoadingState);
+      }
+    };
+
+    fetchImages();
+  }, []);
 
   const handleLoadMoreImages = () => {
     setVisibleImageCount((prev) => prev + IMAGES_PER_LOAD);
   };
 
-  const handleLoadMoreVideos = () => {
-    setVisibleVideoCount((prev) => prev + VIDEOS_PER_LOAD);
+  const handleImageLoad = (idx: number) => {
+    setLoadingImages((prev) => ({ ...prev, [idx]: false }));
   };
 
-  const visibleImages = imageList.slice(0, visibleImageCount);
-  const visibleVideos = videoList.slice(0, visibleVideoCount);
+  const visibleImages = images.slice(0, visibleImageCount);
 
   return (
     <Box>
-      {/*  Gallery Header  */}
+      {/* Photos Header */}
       <Box
         display="flex"
         justifyContent="space-between"
@@ -63,7 +83,7 @@ export default function GalleryList() {
             Photos
           </Typography>
           <Typography variant="subtitle2" fontWeight="medium" color="text.secondary">
-            Don&lsquo;t blink
+            Don&apos;t blink
           </Typography>
         </Box>
         <IconButton size="small">
@@ -76,22 +96,43 @@ export default function GalleryList() {
         </IconButton>
       </Box>
 
-      {/*  Gallery Images Section  */}
+      {/* Images Section */}
       <Collapse in={galleryOpen}>
         <Box display="flex" flexDirection="column" sx={{ mx: 1, my: 2 }}>
           {visibleImages.map((src, idx) => (
             <Card key={idx} sx={{ overflow: 'hidden', borderRadius: 2 }}>
-              <Box
-                sx={{
-                  position: 'relative',
-                  paddingTop: '133%',
-                  backgroundColor: '#f0f0f0',
-                }}
-              >
+              <Box sx={{ position: 'relative', paddingTop: '133%', backgroundColor: '#f0f0f0' }}>
+                {loadingImages[idx] && (
+                  <Box
+                    sx={{
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      width: '100%',
+                      height: '100%',
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      bgcolor: 'white',
+                      zIndex: 1,
+                    }}
+                  >
+                    <Lottie
+                      animationData={barberPole}
+                      loop
+                      autoplay
+                      style={{ width: 100, height: 100 }}
+                    />
+                  </Box>
+                )}
+
                 <CardMedia
                   component="img"
                   image={src}
                   alt={`Gallery image ${idx + 1}`}
+                  onLoad={() => handleImageLoad(idx)}
+                  onError={() => handleImageLoad(idx)}
+                  ref={(el) => { imageRefs.current[idx] = el; }}
                   sx={{
                     position: 'absolute',
                     top: 3,
@@ -99,83 +140,20 @@ export default function GalleryList() {
                     width: '100%',
                     height: '100%',
                     objectFit: 'cover',
+                    opacity: loadingImages[idx] ? 0 : 1,
+                    transition: 'opacity 0.3s ease',
                   }}
                 />
+
+
               </Box>
             </Card>
           ))}
         </Box>
 
-        {/* Load More Images */}
-        {visibleImageCount < imageList.length && (
+        {visibleImageCount < images.length && (
           <Box display="flex" justifyContent="center" mt={2}>
             <Button variant="outlined" size="small" onClick={handleLoadMoreImages}>
-              Load More
-            </Button>
-          </Box>
-        )}
-      </Collapse>
-
-      {/* === Videos Header === */}
-      <Box
-        display="flex"
-        justifyContent="space-between"
-        alignItems="center"
-        onClick={() => setVideosOpen(!videosOpen)}
-        sx={{ cursor: 'pointer', mb: 1, ml: 1, mt: 3 }}
-      >
-        <Box>
-          <Typography variant="h6" fontWeight="bold" color="text.secondary">
-            Videos
-          </Typography>
-          <Typography variant="subtitle2" fontWeight="medium" color="text.secondary">
-            Real cuts, real time
-          </Typography>
-        </Box>
-        <IconButton size="small">
-          <ExpandMoreIcon
-            sx={{
-              transform: videosOpen ? 'rotate(180deg)' : 'rotate(0deg)',
-              transition: 'transform 0.3s ease',
-            }}
-          />
-        </IconButton>
-      </Box>
-
-      {/* === Video Section === */}
-      <Collapse in={videosOpen}>
-        <Box display="flex" flexDirection="column" gap={2}>
-          {visibleVideos.map((src, idx) => (
-            <Card key={idx} sx={{ borderRadius: 2, overflow: 'hidden' }}>
-              <Box
-                sx={{
-                  position: 'relative',
-                  paddingTop: '177%',
-                  backgroundColor: '#000',
-                }}
-              >
-                <CardMedia
-                  component="video"
-                  src={src}
-                  controls
-                  sx={{
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    width: '100%',
-                    height: '100%',
-                    objectFit: 'cover',
-                  }}
-                />
-              </Box>
-            </Card>
-          ))}
-        </Box>
-
-        {/* Load More Videos */}
-        {visibleVideoCount < videoList.length && (
-          <Box display="flex" justifyContent="center" mt={2}>
-            <Button variant="outlined" size="small" onClick={handleLoadMoreVideos}>
               Load More
             </Button>
           </Box>
