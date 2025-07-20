@@ -119,6 +119,8 @@ export default function CombinedBookingModal({
   const [appointments, setAppointments] = useState<string[]>([]);
   const [blockedTimes, setBlockedTimes] = useState<string[]>([]);
   const [availability, setAvailability] = useState<Availability | null>(null);
+  const [bookingSuccess, setBookingSuccess] = useState(false);
+
 
   const totalPrice =
     (selectedService?.price ?? 0) + selectedAddons.reduce((sum, a) => sum + a.price, 0);
@@ -154,7 +156,6 @@ export default function CombinedBookingModal({
             weekends
           }
         `);
-        console.log('Location: BookingCalendar.tsx. \n Data: ' + data);
         setAvailability(data);
       } catch (error) {
         console.error('Failed to fetch availability:', error);
@@ -167,10 +168,15 @@ export default function CombinedBookingModal({
   async function fetchSchedule(date: string) {
     try {
       const res = await fetch(`/api/getSchedule?date=${encodeURIComponent(date)}`);
+
       if (!res.ok) throw new Error('Failed to fetch schedule');
+
       const { appointments, blockedTimes } = await res.json();
+
       setAppointments(appointments.map((a: { time: string }) => a.time));
+
       const expandedBlockedTimes: string[] = [];
+
       blockedTimes.forEach((range: { start_time: string; end_time: string }) => {
         const clean = (str: string) => str.trim().toUpperCase();
         const startIndex = timeSlots.findIndex((slot) => clean(slot) === clean(range.start_time));
@@ -179,7 +185,12 @@ export default function CombinedBookingModal({
           expandedBlockedTimes.push(...timeSlots.slice(startIndex, endIndex + 1));
         }
       });
-      setBlockedTimes(expandedBlockedTimes);
+
+      setBlockedTimes([
+        ...appointments.map((a: { time: string }) => a.time),  // block appointment start times
+        ...expandedBlockedTimes,                               // blocked ranges
+      ]);
+
     } catch (e) {
       console.error(e);
     }
@@ -201,6 +212,43 @@ export default function CombinedBookingModal({
     setClientInfo({ name: '', phone: '', smsReminder: true });
     onClose();
   };
+
+  async function handleConfirmBooking() {
+    const payload = {
+      date: selectedDay.format('YYYY-MM-DD'),
+      startTime: selectedTime,
+      endTime: end.format('h:mm A'),
+      serviceName: selectedService?.name,
+      price: selectedService?.price,
+      addons: selectedAddons,
+      clientName: clientInfo.name,
+      clientPhone: clientInfo.phone,
+      smsReminder: clientInfo.smsReminder,
+      totalPrice,
+    };
+
+    try {
+      const res = await fetch('/api/schedule', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) throw new Error('Failed to schedule appointment.');
+
+      setBookingSuccess(true);
+
+      setTimeout(() => {
+        setBookingSuccess(false);
+        handleClose();
+      }, 2000);
+
+    } catch (err) {
+      console.error(err);
+      alert('Failed to schedule appointment. Please try again.');
+    }
+  }
+
 
   return (
     <Dialog
@@ -447,20 +495,20 @@ export default function CombinedBookingModal({
             Confirmation <ChevronRightIcon sx={{ fontSize: '1rem', color: 'white' }} />
           </Button>
         )}
-
         {step === 'confirmation' && (
           <Button
-            onClick={handleClose}
+            onClick={handleConfirmBooking}
+            disabled={bookingSuccess}
             sx={{
-              backgroundColor: 'black',
+              backgroundColor: bookingSuccess ? 'green' : 'black',
               color: 'white',
               fontWeight: 'bold',
               flex: 1,
               borderRadius: 2,
             }}
           >
-            Confirm
-            <CheckCircleIcon sx={{ ml: 1, color: 'green' }} />
+            {bookingSuccess ? 'Booked!' : 'Confirm'}
+            <CheckCircleIcon sx={{ ml: 1, color: bookingSuccess ? 'white' : 'green' }} />
           </Button>
         )}
       </DialogActions>
