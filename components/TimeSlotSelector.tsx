@@ -4,8 +4,7 @@ import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import Lottie from 'lottie-react';
-import barberPoleAnimation from '@/lottiefiles/Loading.json';
-import scissorsAnimation from '@/lottiefiles/Loading.json';  // optional fun background animation
+import loadingAnimation from "@/lottiefiles/cat Mark loading.json";
 
 dayjs.extend(isSameOrAfter);
 dayjs.extend(isSameOrBefore);
@@ -74,8 +73,6 @@ export default function TimeSlotSelector({
 
   const slotsToRender = inWindow.filter((slot) => !blockedSet.has(normalizeTime(slot)));
 
-  const containerHeight = '25vh';
-
   return (
     <Box
       sx={{
@@ -106,9 +103,9 @@ export default function TimeSlotSelector({
       {isLoading ? (
         <Box sx={{ py: 2 }}>
           <Lottie
-            animationData={barberPoleAnimation}
+            animationData={loadingAnimation}
             loop
-            style={{ height: 100, width: 100 }}
+            style={{ height: 100, width: 100, background: 'transparent' }}
           />
         </Box>
       ) : slotsToRender.length === 0 ? (

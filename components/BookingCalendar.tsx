@@ -136,7 +136,7 @@ export default function CombinedBookingModal({
 
     const timeout = setTimeout(() => {
       setShowSlots(true); // show slots after delay
-    }, 1500);
+    }, 2400);
 
     return () => clearTimeout(timeout); // cleanup timer if day changes fast
   }, [selectedDay]);
