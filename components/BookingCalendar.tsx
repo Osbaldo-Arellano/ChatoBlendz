@@ -126,6 +126,21 @@ export default function CombinedBookingModal({
   const [availability, setAvailability] = useState<Availability | null>(null);
   const [bookingSuccess, setBookingSuccess] = useState(false);
   const [bookingInProgress, setBookingInProgress] = useState(false);
+  const isSlotsReady = availability && blockedTimes.length > 0;
+  const calendarReady = availability && blockedTimes.length > 0;
+
+  const [showSlots, setShowSlots] = useState(false);
+
+  useEffect(() => {
+    setShowSlots(false); // hide slots immediately when day changes
+
+    const timeout = setTimeout(() => {
+      setShowSlots(true); // show slots after delay
+    }, 1500);
+
+    return () => clearTimeout(timeout); // cleanup timer if day changes fast
+  }, [selectedDay]);
+
 
   const totalPrice =
     (selectedService?.price ?? 0) + selectedAddons.reduce((sum, a) => sum + a.price, 0);
@@ -313,13 +328,15 @@ export default function CombinedBookingModal({
                 mb: 1,
               }}
             ></Box>
+
             <TimeSlotSelector
               timeSlots={timeSlots}
               availability={availability}
               selectedDay={selectedDay}
               blockedTimes={blockedTimes}
+              selectedTime={selectedTime}
               onSelectTime={(time) => setSelectedTime(time)}
-              selectedTime={selectedTime} // <-- NEW
+              isLoading={!showSlots}
             />
             {/* Preview Section */}
             <Box>
