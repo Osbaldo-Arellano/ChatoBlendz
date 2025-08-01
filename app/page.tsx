@@ -5,9 +5,7 @@ import MobileOnlyWrapper from '@/components/MobileOnlyWrapper';
 export default function Page() {
   return (
     <Suspense fallback={<div>Loading...</div>}>
-      <MobileOnlyWrapper>
-        <BookingPage />
-      </MobileOnlyWrapper>
+      <BookingPage />
     </Suspense>
   );
 }

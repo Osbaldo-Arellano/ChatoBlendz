@@ -2,7 +2,7 @@
 
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { Box } from '@mui/material';
+import { Box, Container } from '@mui/material';
 import BarberProfile from '@/components/BarberProfile';
 import ServiceList from '@/components/ServiceList';
 import CombinedBookingCalendarModal from '@/components/BookingCalendar';
@@ -43,6 +43,7 @@ export default function BookingPage() {
     parsedDuration: number;
   } | null>(null);
   const [calendarOpen, setCalendarOpen] = useState(false);
+  const [availability, setAvailability] = useState<any>(null);
 
   useEffect(() => {
     if (urlTab !== activeTab) {
@@ -52,7 +53,23 @@ export default function BookingPage() {
     }
   }, [activeTab, urlTab, searchParams, router]);
 
-  const [availability, setAvailability] = useState<any>(null);
+  useEffect(() => {
+    async function fetchAvailability() {
+      try {
+        const data = await client.fetch(`
+          *[_type == "availability"][0]{
+            weekdays,
+            weekends
+          }
+        `);
+        setAvailability(data);
+      } catch (error) {
+        console.error('Failed to fetch availability:', error);
+      }
+    }
+
+    fetchAvailability();
+  }, []);
 
   const renderTabContent = () => {
     switch (activeTab) {
@@ -95,24 +112,6 @@ export default function BookingPage() {
     }
   };
 
-  useEffect(() => {
-    async function fetchAvailability() {
-      try {
-        const data = await client.fetch(`
-          *[_type == "availability"][0]{
-            weekdays,
-            weekends
-          }
-        `);
-        setAvailability(data);
-      } catch (error) {
-        console.error('Failed to fetch availability:', error);
-      }
-    }
-
-    fetchAvailability();
-  }, []);
-
   return (
     <Box
       sx={{
@@ -123,9 +122,12 @@ export default function BookingPage() {
       }}
     >
       <Box sx={{ flex: 1 }}>
-        <BarberProfile />
-        <SectionNav active={activeTab} onChange={setActiveTab} />
-        {renderTabContent()}
+        <Container maxWidth="lg" sx={{ py: { xs: 2, md: 4 } }}>
+          <BarberProfile />
+          <SectionNav active={activeTab} onChange={setActiveTab} />
+          {renderTabContent()}
+        </Container>
+
         <CombinedBookingCalendarModal
           open={calendarOpen}
           onClose={() => {
@@ -136,6 +138,7 @@ export default function BookingPage() {
           availability={availability}
         />
       </Box>
+
       <Footer />
     </Box>
   );
