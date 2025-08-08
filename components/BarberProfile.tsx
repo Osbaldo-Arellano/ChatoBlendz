@@ -407,6 +407,26 @@ export default function BarberProfile() {
                     <PhoneIcon sx={{ fontSize: 35 }} />
                   </IconButton>
                 </Tooltip>
+
+                <Tooltip title="Get Directions">
+                  <IconButton
+                    component="a"
+                    href="#services"
+                    sx={{
+                      bgcolor: '#f1f1f1',
+                      color: 'black',
+                      borderRadius: 3,
+                      '&:hover': { bgcolor: '#1565c0' },
+                    }}
+                  >
+                    <Typography
+                      color="text.primary"
+                      sx={{ maxWidth: 360, color: 'black', fontWeight: 550, fontSize: '0.9rem' }}
+                    >
+                      BOOK
+                    </Typography>
+                  </IconButton>
+                </Tooltip>
               </Box>
             </Box>
           </Box>

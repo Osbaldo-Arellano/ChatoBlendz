@@ -78,7 +78,7 @@ export default function ServiceList({ onSelect }: { onSelect: (service: any) => 
   };
 
   return (
-    <Box mt={3}>
+    <Box mt={3} id="services">
       <Box mb={2} ml={1}>
         <Typography variant="h6" fontWeight="bold" color="text.secondary">
           Services
