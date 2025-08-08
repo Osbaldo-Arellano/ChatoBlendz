@@ -298,11 +298,12 @@ export default function BarberProfile() {
             justifyContent: 'space-between',
             gap: 2,
             flexWrap: 'wrap',
+            mt: 5,
           }}
         >
           {/* Left chunk: logo + tagline + rating */}
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flex: '1 1 520px' }}>
-            <Image src="/images/client.png" alt="ChatoBlendz logo" width={90} height={90} />
+            <Image src="/images/client.png" alt="ChatoBlendz logo" width={150} height={100} />
 
             <Box sx={{ display: 'grid', gap: 0.75 }}>
               {/* tagline */}
@@ -318,9 +319,27 @@ export default function BarberProfile() {
               >
                 <Typography
                   sx={{
-                    color: 'text.primary',
-                    fontSize: { xs: '1rem', md: '1.1rem' },
-                    fontWeight: { xs: 600, md: 700 },
+                    fontSize: { xs: '1.4rem', sm: '1.6rem', md: '2rem', lg: '2.3rem' },
+                    fontWeight: 700,
+                    fontFamily: '"Playfair Display", serif',
+                    color: '#222',
+                    textAlign: 'center',
+                    letterSpacing: '0.5px',
+                    background: 'linear-gradient(to right, #000, #555)',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                    paddingBottom: '0.5rem',
+                    position: 'relative',
+                    width: '100%',
+                    '&::after': {
+                      content: '""',
+                      position: 'absolute',
+                      left: 0,
+                      bottom: 0,
+                      width: '100%',
+                      height: '3px',
+                      background: 'linear-gradient(to right, transparent, #000, transparent)',
+                    },
                   }}
                 >
                   Proudly serving the Salem, Woodburn, and Portland areas.
@@ -339,18 +358,26 @@ export default function BarberProfile() {
               </Box>
 
               {/* rating / reviews */}
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                <StarIcon sx={{ color: '#000', fontSize: 18 }} />
-                <StarIcon sx={{ color: '#000', fontSize: 18 }} />
-                <StarIcon sx={{ color: '#000', fontSize: 18 }} />
-                <StarIcon sx={{ color: '#000', fontSize: 18 }} />
-                <StarIcon sx={{ color: '#000', fontSize: 18 }} />
-                <Typography variant="body2" sx={{ ml: 0.75, color: 'text.secondary' }}>
-                  5.0 Stars (100+ clients)
+              <Box sx={{ display: 'flex', justifyContent: 'center', gap: 0.5 }}>
+                <Typography variant="body1" sx={{ color: 'text.secondary' }}>
+                  5 Stars
                 </Typography>
               </Box>
+              <Box sx={{ display: 'flex', justifyContent: 'center', gap: 0.5 }}>
+                <StarIcon sx={{ color: 'gold', fontSize: 20 }} />
+                <StarIcon sx={{ color: 'gold', fontSize: 20 }} />
+                <StarIcon sx={{ color: 'gold', fontSize: 20 }} />
+                <StarIcon sx={{ color: 'gold', fontSize: 20 }} />
+                <StarIcon sx={{ color: 'gold', fontSize: 20 }} />
+              </Box>
+              <Box sx={{ display: 'flex', justifyContent: 'center', gap: 0.5 }}>
+                <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                  100+ clients
+                </Typography>
+              </Box>
+
               <Box
-                sx={{ display: 'flex', gap: 2, flexShrink: 0, justifyContent: 'flex-end', mt: 0.5 }}
+                sx={{ display: 'flex', gap: 2, flexShrink: 0, justifyContent: 'center', mt: 0.5 }}
               >
                 <Tooltip title="Get Directions">
                   <IconButton

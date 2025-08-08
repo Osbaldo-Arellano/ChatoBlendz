@@ -15,6 +15,7 @@ import Grid from '@mui/material/Grid';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import CloseIcon from '@mui/icons-material/Close';
+import loadingGreyAnimation from '@/lottiefiles/loading_grey.json';
 
 // List loading animation
 import listLoadingAnimation from "@/lottiefiles/Barber's Pole.json";
@@ -228,13 +229,31 @@ export default function ServiceList({ onSelect }: { onSelect: (service: any) => 
           {/* Image */}
           {selectedService?.image?.asset?.url && (
             <Box
-              sx={{ position: 'relative', width: '100%', aspectRatio: '5/7', bgcolor: '#f5f5f5' }}
+              sx={{
+                position: 'relative',
+                width: '100%',
+                aspectRatio: '5/7',
+                bgcolor: '#f5f5f5',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
             >
+              {imgLoading && (
+                <Player
+                  autoplay
+                  loop
+                  src={loadingGreyAnimation}
+                  style={{ height: 80, width: 80, position: 'absolute', zIndex: 1 }}
+                />
+              )}
+
               <Image
                 src={selectedService.image.asset.url}
                 alt={selectedService.name}
                 fill
                 style={{ objectFit: 'cover' }}
+                onLoad={() => setImgLoading(false)}
               />
             </Box>
           )}
