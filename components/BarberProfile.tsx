@@ -256,17 +256,19 @@ export default function BarberProfile() {
       <Box px={{ xs: 2, md: 3 }} pt={2}>
         {/* skills/traits chips */}
         <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.75, mb: 1 }}>
-          {['Full Service Barber', 'Fades', 'Tapers', 'Shears', 'Beards'].map((label) => (
-            <Chip
-              key={label}
-              label={label}
-              size="small"
-              sx={{
-                backgroundColor: '#f1f1f1',
-                fontWeight: 500,
-              }}
-            />
-          ))}
+          {['Full Service Barber', 'Fades', 'Tapers', 'Shears', 'Beards', 'Mobile Service'].map(
+            (label) => (
+              <Chip
+                key={label}
+                label={label}
+                size="small"
+                sx={{
+                  backgroundColor: '#f1f1f1',
+                  fontWeight: 500,
+                }}
+              />
+            ),
+          )}
         </Box>
 
         {/* promo banner (optional) */}
@@ -312,9 +314,6 @@ export default function BarberProfile() {
                   display: 'inline-flex',
                   alignItems: 'center',
                   gap: 1,
-                  background: 'linear-gradient(to right, rgba(255,255,255,0), #f6f6f6)',
-                  borderRadius: 2,
-                  py: 1,
                 }}
               >
                 <Typography
@@ -322,13 +321,9 @@ export default function BarberProfile() {
                     fontSize: { xs: '1.4rem', sm: '1.6rem', md: '2rem', lg: '2.3rem' },
                     fontWeight: 700,
                     fontFamily: '"Playfair Display", serif',
-                    color: '#222',
-                    textAlign: 'center',
+                    color: 'text.secondary',
+                    textAlign: 'left',
                     letterSpacing: '0.5px',
-                    background: 'linear-gradient(to right, #000, #555)',
-                    WebkitBackgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent',
-                    paddingBottom: '0.5rem',
                     position: 'relative',
                     width: '100%',
                     '&::after': {
@@ -338,7 +333,6 @@ export default function BarberProfile() {
                       bottom: 0,
                       width: '100%',
                       height: '3px',
-                      background: 'linear-gradient(to right, transparent, #000, transparent)',
                     },
                   }}
                 >
@@ -358,27 +352,25 @@ export default function BarberProfile() {
               </Box>
 
               {/* rating / reviews */}
-              <Box sx={{ display: 'flex', justifyContent: 'center', gap: 0.5 }}>
+              <Box sx={{ display: 'flex', justifyContent: 'left', gap: 0.5 }}>
                 <Typography variant="body1" sx={{ color: 'text.secondary' }}>
-                  5 Stars
-                </Typography>
-              </Box>
-              <Box sx={{ display: 'flex', justifyContent: 'center', gap: 0.5 }}>
-                <StarIcon sx={{ color: 'gold', fontSize: 20 }} />
-                <StarIcon sx={{ color: 'gold', fontSize: 20 }} />
-                <StarIcon sx={{ color: 'gold', fontSize: 20 }} />
-                <StarIcon sx={{ color: 'gold', fontSize: 20 }} />
-                <StarIcon sx={{ color: 'gold', fontSize: 20 }} />
-              </Box>
-              <Box sx={{ display: 'flex', justifyContent: 'center', gap: 0.5 }}>
-                <Typography variant="body2" sx={{ color: 'text.secondary' }}>
                   100+ clients
                 </Typography>
               </Box>
+              <Box sx={{ display: 'flex', justifyContent: 'left', gap: 0.5 }}>
+                <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                  5 Stars
+                </Typography>
+              </Box>
+              <Box sx={{ display: 'flex', justifyContent: 'left', gap: 0.5 }}>
+                <StarIcon sx={{ color: 'gold', fontSize: 20 }} />
+                <StarIcon sx={{ color: 'gold', fontSize: 20 }} />
+                <StarIcon sx={{ color: 'gold', fontSize: 20 }} />
+                <StarIcon sx={{ color: 'gold', fontSize: 20 }} />
+                <StarIcon sx={{ color: 'gold', fontSize: 20 }} />
+              </Box>
 
-              <Box
-                sx={{ display: 'flex', gap: 2, flexShrink: 0, justifyContent: 'center', mt: 0.5 }}
-              >
+              <Box sx={{ display: 'flex', gap: 2, flexShrink: 0, justifyContent: 'left', mt: 0.5 }}>
                 <Tooltip title="Get Directions">
                   <IconButton
                     component="a"
@@ -386,19 +378,17 @@ export default function BarberProfile() {
                     target="_blank"
                     rel="noopener noreferrer"
                     sx={{
-                      bgcolor: '#1565c0',
-                      color: 'white',
+                      bgcolor: 'none',
+                      color: 'black',
                       borderRadius: 3,
                       '&:hover': { bgcolor: '#1565c0' },
-                      boxShadow: '0 3px 4px rgba(0,0,0,0.1)',
-                      borderBottom: '1px solid grey',
                     }}
                   >
                     <Typography
                       color="text.primary"
-                      sx={{ maxWidth: 360, color: 'white', fontWeight: 550 }}
+                      sx={{ maxWidth: 360, color: 'black', fontWeight: 550 }}
                     >
-                      Directions
+                      <MapIcon sx={{ fontSize: 35 }} />
                     </Typography>
                   </IconButton>
                 </Tooltip>
@@ -408,15 +398,13 @@ export default function BarberProfile() {
                     component="a"
                     href="tel:+17145551234"
                     sx={{
-                      bgcolor: '#1565c0',
-                      boxShadow: '0 3px 4px rgba(0,0,0,0.1)',
-                      borderBottom: '1px solid grey',
-                      color: 'white',
+                      bgcolor: 'none',
+                      color: 'black',
                       borderRadius: 3,
                       '&:hover': { bgcolor: 'grey.900' },
                     }}
                   >
-                    <PhoneIcon />
+                    <PhoneIcon sx={{ fontSize: 35 }} />
                   </IconButton>
                 </Tooltip>
               </Box>
