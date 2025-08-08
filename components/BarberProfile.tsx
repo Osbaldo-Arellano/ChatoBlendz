@@ -381,7 +381,6 @@ export default function BarberProfile() {
                       bgcolor: 'none',
                       color: 'black',
                       borderRadius: 3,
-                      '&:hover': { bgcolor: '#1565c0' },
                     }}
                   >
                     <Typography
@@ -401,14 +400,13 @@ export default function BarberProfile() {
                       bgcolor: 'none',
                       color: 'black',
                       borderRadius: 3,
-                      '&:hover': { bgcolor: 'grey.900' },
                     }}
                   >
                     <PhoneIcon sx={{ fontSize: 35 }} />
                   </IconButton>
                 </Tooltip>
 
-                <Tooltip title="Get Directions">
+                <Tooltip title="Book Now">
                   <IconButton
                     component="a"
                     href="#services"
@@ -416,7 +414,6 @@ export default function BarberProfile() {
                       bgcolor: '#f1f1f1',
                       color: 'black',
                       borderRadius: 3,
-                      '&:hover': { bgcolor: '#1565c0' },
                     }}
                   >
                     <Typography
