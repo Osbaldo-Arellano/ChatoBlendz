@@ -187,7 +187,6 @@ export default function HighlightList({ onSelect }: { onSelect: (service: any) =
           <Dialog
             open={!!selectedDescription}
             onClose={() => setSelectedDescription(null)}
-            maxWidth="sm"
             fullWidth
           >
             <DialogTitle>Description</DialogTitle>

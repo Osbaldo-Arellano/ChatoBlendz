@@ -4,7 +4,7 @@ import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import Lottie from 'lottie-react';
-import loadingAnimation from "@/lottiefiles/cat Mark loading.json";
+import loadingAnimation from '@/lottiefiles/loading_grey.json';
 
 dayjs.extend(isSameOrAfter);
 dayjs.extend(isSameOrBefore);
@@ -59,19 +59,37 @@ export default function TimeSlotSelector({
 
   const inWindow = windowRange
     ? timeSlots.filter((slot) => {
-      const pSlot = dayjs(slot, FORMAT);
-      const pStart = dayjs(windowRange.start, FORMAT);
-      const pEnd = dayjs(windowRange.end, FORMAT);
+        const pSlot = dayjs(slot, FORMAT);
+        const pStart = dayjs(windowRange.start, FORMAT);
+        const pEnd = dayjs(windowRange.end, FORMAT);
 
-      const tSlot = startOfDay.hour(pSlot.hour()).minute(pSlot.minute());
-      const tStart = startOfDay.hour(pStart.hour()).minute(pStart.minute());
-      const tEnd = startOfDay.hour(pEnd.hour()).minute(pEnd.minute());
+        const tSlot = startOfDay.hour(pSlot.hour()).minute(pSlot.minute());
+        const tStart = startOfDay.hour(pStart.hour()).minute(pStart.minute());
+        const tEnd = startOfDay.hour(pEnd.hour()).minute(pEnd.minute());
 
-      return tSlot.isSameOrAfter(tStart) && tSlot.isSameOrBefore(tEnd);
-    })
+        return tSlot.isSameOrAfter(tStart) && tSlot.isSameOrBefore(tEnd);
+      })
     : [];
 
-  const slotsToRender = inWindow.filter((slot) => !blockedSet.has(normalizeTime(slot)));
+  const now = dayjs();
+  const cutoffMinutes = 30;
+
+  const slotsToRender = inWindow.filter((slot) => {
+    const normalized = normalizeTime(slot);
+
+    // remove blocked times
+    if (blockedSet.has(normalized)) return false;
+
+    // if booking for today, skip slots within next 30 min
+    if (selectedDay.isSame(now, 'day')) {
+      const slotTime = dayjs(slot, FORMAT);
+      if (slotTime.isBefore(now.add(cutoffMinutes, 'minute'))) {
+        return false;
+      }
+    }
+
+    return true;
+  });
 
   return (
     <Box
@@ -171,6 +189,5 @@ export default function TimeSlotSelector({
         </Typography>
       )}
     </Box>
-
   );
 }

@@ -29,7 +29,6 @@ import { useRouter } from 'next/navigation';
 import FullscreenLoading from './FullscreenLoading';
 import PhoneNumberField from './PhoneInput';
 
-
 dayjs.extend(isSameOrAfter);
 dayjs.extend(isSameOrBefore);
 
@@ -136,11 +135,10 @@ export default function CombinedBookingModal({
 
     const timeout = setTimeout(() => {
       setShowSlots(true); // show slots after delay
-    }, 2400);
+    }, 1500);
 
     return () => clearTimeout(timeout); // cleanup timer if day changes fast
   }, [selectedDay]);
-
 
   const totalPrice =
     (selectedService?.price ?? 0) + selectedAddons.reduce((sum, a) => sum + a.price, 0);
@@ -207,10 +205,9 @@ export default function CombinedBookingModal({
       });
 
       setBlockedTimes([
-        ...appointments.map((a: { time: string }) => a.time),  // block appointment start times
-        ...expandedBlockedTimes,                               // blocked ranges
+        ...appointments.map((a: { time: string }) => a.time), // block appointment start times
+        ...expandedBlockedTimes, // blocked ranges
       ]);
-
     } catch (e) {
       console.error(e);
     }
@@ -234,7 +231,7 @@ export default function CombinedBookingModal({
   };
 
   async function handleConfirmBooking() {
-    setBookingInProgress(true);  // <-- Start showing the FullscreenLoading
+    setBookingInProgress(true); // <-- Start showing the FullscreenLoading
 
     const payload = {
       date: selectedDay.format('YYYY-MM-DD'),
@@ -263,7 +260,6 @@ export default function CombinedBookingModal({
       setTimeout(() => {
         router.push('/success');
       }, 3500);
-
     } catch (err) {
       console.error(err);
       alert('Failed to schedule appointment. Please try again.');
@@ -271,16 +267,8 @@ export default function CombinedBookingModal({
     }
   }
 
-
-
   return (
-    <Dialog
-      open={open}
-      onClose={handleClose}
-      fullWidth
-      maxWidth="sm"
-      PaperProps={{ sx: { borderRadius: 3 } }}
-    >
+    <Dialog open={open} onClose={handleClose} fullScreen maxWidth="sm">
       <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <Typography fontWeight="bold">Book Your Appointment</Typography>
         <IconButton onClick={handleClose}>
@@ -320,14 +308,7 @@ export default function CombinedBookingModal({
             </Box>
 
             <Typography fontWeight="bold">Select Time</Typography>
-            <Box
-              sx={{
-                display: 'flex',
-                overflowX: 'auto',
-                gap: 1,
-                mb: 1,
-              }}
-            ></Box>
+            <Box sx={{ display: 'flex', overflowX: 'auto', gap: 1, mb: 1 }}></Box>
 
             <TimeSlotSelector
               timeSlots={timeSlots}
@@ -338,7 +319,7 @@ export default function CombinedBookingModal({
               onSelectTime={(time) => setSelectedTime(time)}
               isLoading={!showSlots}
             />
-            {/* Preview Section */}
+
             <Box>
               <Typography fontSize="0.9rem" fontWeight="bold" sx={{ mb: 0.5 }}>
                 Date:
@@ -361,7 +342,7 @@ export default function CombinedBookingModal({
 
             <Divider sx={{ my: 2, mt: 2 }} />
             <Typography fontSize="0.9rem" fontWeight="bold" sx={{ mb: 0.5 }}>
-              Addtional Services:
+              Additional Services:
             </Typography>
             {selectedAddons.length > 0 && (
               <Box>
@@ -408,12 +389,12 @@ export default function CombinedBookingModal({
             <Typography fontWeight="bold">Total: ${totalPrice.toFixed(2)}</Typography>
           </>
         )}
+
         {step === 'clientInfo' && (
           <>
             <Typography fontWeight="bold" sx={{ mb: 1 }}>
               Contact Information
             </Typography>
-
             <TextField
               label="Full Name"
               fullWidth
@@ -425,7 +406,6 @@ export default function CombinedBookingModal({
               value={clientInfo.phone}
               onChange={(val) => setClientInfo({ ...clientInfo, phone: val })}
             />
-
 
             <FormControlLabel
               control={
@@ -449,7 +429,6 @@ export default function CombinedBookingModal({
             <Typography fontWeight="bold" sx={{ mb: 1 }}>
               Confirm Appointment
             </Typography>
-
             <Typography>
               {dateObj.format('dddd, MMM D')} at {dateObj.format('h:mm A')} (ends{' '}
               {end.format('h:mm A')})
@@ -491,14 +470,18 @@ export default function CombinedBookingModal({
 
         {step === 'calendar' && (
           <Button
-            disabled={!selectedTime}
             onClick={() => setStep('clientInfo')}
+            disabled={!selectedTime}
             sx={{
-              backgroundColor: 'black',
+              backgroundColor: selectedTime ? 'black' : 'grey',
               color: 'white',
               fontWeight: 'bold',
               flex: 1,
               borderRadius: 2,
+              '&.Mui-disabled': {
+                backgroundColor: 'grey.400',
+                color: 'white',
+              },
             }}
           >
             Continue
@@ -510,16 +493,21 @@ export default function CombinedBookingModal({
             onClick={handleSubmitClientInfo}
             disabled={!clientInfo.name || !clientInfo.phone}
             sx={{
-              backgroundColor: 'black',
+              backgroundColor: clientInfo.name && clientInfo.phone ? 'black' : 'grey',
               color: 'white',
               fontWeight: 'bold',
               flex: 1,
               borderRadius: 2,
+              '&.Mui-disabled': {
+                backgroundColor: 'grey.400',
+                color: 'white',
+              },
             }}
           >
             Confirmation <ChevronRightIcon sx={{ fontSize: '1rem', color: 'white' }} />
           </Button>
         )}
+
         {step === 'confirmation' && (
           <Button
             onClick={handleConfirmBooking}
@@ -530,6 +518,10 @@ export default function CombinedBookingModal({
               fontWeight: 'bold',
               flex: 1,
               borderRadius: 2,
+              '&.Mui-disabled': {
+                backgroundColor: 'grey.400',
+                color: 'white',
+              },
             }}
           >
             {bookingSuccess ? 'Booked!' : 'Confirm'}
@@ -546,7 +538,6 @@ export default function CombinedBookingModal({
       />
 
       {bookingInProgress && <FullscreenLoading />}
-
     </Dialog>
   );
 }

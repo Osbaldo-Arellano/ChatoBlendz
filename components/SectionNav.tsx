@@ -1,6 +1,6 @@
 'use client';
 
-import { Box, Button } from '@mui/material';
+import { Box, Button, useTheme, useMediaQuery } from '@mui/material';
 
 const tabs = ['Services', 'Portfolio', 'Contact', 'Availability'];
 
@@ -11,6 +11,9 @@ export default function SectionNav({
   active: string;
   onChange: (tab: string) => void;
 }) {
+  const theme = useTheme();
+  const isMdUp = useMediaQuery(theme.breakpoints.up('md'));
+
   return (
     <Box
       sx={{
@@ -21,20 +24,19 @@ export default function SectionNav({
         borderBottom: '1px solid #eee',
         boxShadow: '0 2px 4px rgba(0,0,0,0.04)',
         display: 'flex',
-        justifyContent: 'center',
+        justifyContent: isMdUp ? 'flex-start' : 'center',
         py: 1.5,
       }}
     >
       <Box
         sx={{
           display: 'flex',
-          justifyContent: 'center',
+          justifyContent: isMdUp ? 'flex-start' : 'center',
           alignItems: 'center',
           flexWrap: 'wrap',
           gap: 1,
           width: '100%',
-          mx: 'auto',
-          px: 2,
+          maxWidth: '1200px',
         }}
       >
         {tabs.map((tab) => {

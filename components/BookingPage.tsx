@@ -2,7 +2,7 @@
 
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { Box, Container } from '@mui/material';
+import { Box, Container, useTheme, useMediaQuery } from '@mui/material';
 import BarberProfile from '@/components/BarberProfile';
 import ServiceList from '@/components/ServiceList';
 import CombinedBookingCalendarModal from '@/components/BookingCalendar';
@@ -30,6 +30,9 @@ function parseDurationToMinutes(durationStr: string): number {
 export default function BookingPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
+
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   const defaultTab = 'Services';
   const urlTab = searchParams.get('tab');
@@ -118,11 +121,17 @@ export default function BookingPage() {
         minHeight: '100vh',
         display: 'flex',
         flexDirection: 'column',
-        backgroundColor: 'white',
+        bgcolor: 'white',
       }}
     >
       <Box sx={{ flex: 1 }}>
-        <Container maxWidth="lg" sx={{ py: { xs: 2, md: 4 } }}>
+        <Container
+          disableGutters={isMobile}
+          maxWidth={isMobile ? false : 'lg'} // full-width on mobile, constrained on desktop
+          sx={{
+            px: isMobile ? 0 : 2, // remove horizontal padding on mobile
+          }}
+        >
           <BarberProfile />
           <SectionNav active={activeTab} onChange={setActiveTab} />
           {renderTabContent()}

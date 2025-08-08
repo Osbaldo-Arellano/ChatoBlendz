@@ -2,8 +2,12 @@ import { NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase-admin';
 import { DateTime } from 'luxon';
 
+/**
+ * Convert a time string in 24-hour format (HH:mm) to a 12-hour format (h:mm a) in PST.
+ * @param timeStr - The time string in "HH:mm" format.
+ * @returns A formatted time string in 12-hour format with AM/PM.
+ */
 function to12Hour(timeStr: string) {
-  console.log(`⏳ Converting to 12-hour format: ${timeStr}`);
   const [hours, minutes] = timeStr.split(':');
 
   const formatted = DateTime.fromObject(
@@ -11,27 +15,25 @@ function to12Hour(timeStr: string) {
     { zone: 'America/Los_Angeles' }
   ).toFormat('h:mm a');
 
-  console.log(`✅ Converted: ${formatted}`);
   return formatted;
 }
 
+/**
+ * GET: Retrieve the list of booked and blocked time slots for a given date.
+ * - Requires the `date` query parameter in YYYY-MM-DD format.
+ * - Fetches:
+ *   1. Appointments from the `appointments` table.
+ *   2. Active blocked times from the `blocked_times` table.
+ * - If the date is today, automatically blocks all past time slots.
+ * - Returns data in 12-hour format.
+ */
 export async function GET(req: Request) {
-  console.log('🚀 [GET] /api/blocked-times route hit');
-  console.log('🌎 Environment:', process.env.VERCEL ? 'Vercel Production' : 'Local Development');
-  console.log('🔐 Supabase URL:', process.env.SUPABASE_URL);
-  console.log('🔐 Supabase Service Role Key (exists?):', !!process.env.SUPABASE_SERVICE_ROLE_KEY);
-
   const { searchParams } = new URL(req.url);
   const date = searchParams.get('date');
 
-  console.log('📅 Query Parameter - date:', date);
-
   if (!date) {
-    console.warn('⚠️ Missing date in query params');
     return NextResponse.json({ error: 'Missing date' }, { status: 400 });
   }
-
-  console.log('🛠️ Querying Supabase for appointments and blocked_times...');
 
   const [{ data: appointments, error: apptError }, { data: blockedTimes, error: blockError }] =
     await Promise.all([
@@ -39,11 +41,7 @@ export async function GET(req: Request) {
       supabaseAdmin.from('blocked_times').select('start_time, end_time').eq('date', date).eq('status', 'active'),
     ]);
 
-  console.log('📋 Appointments fetched:', appointments);
-  console.log('🛑 Blocked Times fetched:', blockedTimes);
-
   if (apptError || blockError) {
-    console.error('❌ Supabase fetch error:', { apptError, blockError });
     return NextResponse.json({ error: 'Failed to fetch schedule' }, { status: 500 });
   }
 
@@ -51,18 +49,11 @@ export async function GET(req: Request) {
   const currentTime = nowPST.toFormat('h:mm a');
   const isToday = nowPST.toFormat('yyyy-MM-dd') === date;
 
-  console.log('⏰ Current Time (PST):', currentTime);
-  console.log('📆 Is today?', isToday);
-
   const autoBlockedTimes = isToday ? generatePastBlockedTimes(currentTime) : [];
-
-  console.log('🕒 Auto-blocked past times:', autoBlockedTimes);
 
   const appointments12h = (appointments || []).map((item) => ({
     time: item.start_time,
   }));
-
-  console.log('📅 Appointments in 12-hour format:', appointments12h);
 
   const blockedTimes12h = [
     ...autoBlockedTimes,
@@ -72,17 +63,20 @@ export async function GET(req: Request) {
     })),
   ];
 
-  console.log('✅ Final Blocked Times (12h format):', blockedTimes12h);
-
   return NextResponse.json({
     appointments: appointments12h,
     blockedTimes: blockedTimes12h,
   });
 }
 
+/**
+ * Generate time slots that should be auto-blocked because they are in the past.
+ * - Used when the requested date is today.
+ * - Returns 30-minute intervals from 7:00 AM to 11:00 PM that occur before the current time.
+ * @param currentTime - The current time in 12-hour format (h:mm a).
+ * @returns An array of objects with start_time and end_time in 12-hour format.
+ */
 function generatePastBlockedTimes(currentTime: string) {
-  console.log('⚙️ Generating past blocked times based on:', currentTime);
-
   const allTimeSlots = [
     '7:00 AM', '7:30 AM', '8:00 AM', '8:30 AM',
     '9:00 AM', '9:30 AM', '10:00 AM', '10:30 AM',

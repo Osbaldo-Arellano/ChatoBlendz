@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase-admin';
 
-// POST: create a new appointment (public access)
+// POST: create a new appointment
 export async function POST(req: NextRequest) {
   const body = await req.json();
 
@@ -17,7 +17,6 @@ export async function POST(req: NextRequest) {
     totalPrice,
   } = body;
 
-  // Basic validation
   if (!clientName || !clientPhone || !date || !startTime || !serviceName) {
     return NextResponse.json(
       { error: 'Missing required fields.' },
@@ -43,7 +42,6 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  // Build appointment object
   const appointment = {
     name: clientName,
     phone_number: clientPhone,
@@ -52,7 +50,7 @@ export async function POST(req: NextRequest) {
     start_time: startTime,
     service: serviceName,
     price,
-    addons: addons ? JSON.stringify(addons) : null, // serialize addons list
+    addons: addons ? JSON.stringify(addons) : null, 
     total_price: totalPrice,
     created_at: new Date().toISOString(),
   };

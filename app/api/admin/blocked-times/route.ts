@@ -3,7 +3,12 @@ import { auth0 } from '@/lib/auth0';
 import { supabaseAdmin } from '@/lib/supabase-admin';
 import { formatTimeTo12Hour } from '@/lib/formatTime';
 
-// GET all blocked times (admin only)
+/**
+ * GET: Retrieve all blocked times from the database.
+ * - Accessible to admins only.
+ * - Returns all entries sorted by date and start time (ascending).
+ * - Formats start_time and end_time to 12-hour format before returning.
+ */
 export async function GET() {
   const { data, error } = await supabaseAdmin
     .from('blocked_times')
@@ -24,6 +29,13 @@ export async function GET() {
   return NextResponse.json(formatted);
 }
 
+/**
+ * POST: Create a new blocked time entry in the database.
+ * - Admin authentication required (via Auth0).
+ * - Expects startDate, startTime, and endTime in the request body.
+ * - Optional: reason field.
+ * - Inserts a new record with status set to 'active'.
+ */
 export async function POST(req: NextRequest) {
   const session = await auth0.getSession();
   if (!session) {
@@ -34,8 +46,8 @@ export async function POST(req: NextRequest) {
   const {
     startDate, // required, e.g. "2025-07-10"
     startTime, // required, e.g. "13:00"
-    endTime, // required, e.g. "14:00"
-    reason, // optional
+    endTime,   // required, e.g. "14:00"
+    reason,    // optional
   } = body;
 
   if (!startDate || !startTime || !endTime) {
@@ -52,7 +64,7 @@ export async function POST(req: NextRequest) {
 
   const { data, error } = await supabaseAdmin
     .from('blocked_times')
-    .insert(block) // insert single block
+    .insert(block)
     .select();
 
   if (error) {
@@ -62,7 +74,13 @@ export async function POST(req: NextRequest) {
   return NextResponse.json(data[0]); // return single blocked time
 }
 
-// PUT: update a blocked time (admin only)
+/**
+ * PUT: Update an existing blocked time entry.
+ * - Admin authentication required.
+ * - Requires id, date, start_time, and end_time in the request body.
+ * - Optionally updates the reason field.
+ * - Returns the updated entry with time fields formatted in 12-hour format.
+ */
 export async function PUT(req: NextRequest) {
   const session = await auth0.getSession();
   if (!session) {
@@ -102,7 +120,12 @@ export async function PUT(req: NextRequest) {
   return NextResponse.json(formatted);
 }
 
-// DELETE: remove a single blocked time by ID (admin only)
+/**
+ * DELETE: Remove a blocked time entry by ID.
+ * - Admin authentication required.
+ * - Requires id in the request body.
+ * - Permanently deletes the specified blocked time from the database.
+ */
 export async function DELETE(req: NextRequest) {
   const session = await auth0.getSession();
   if (!session) {
