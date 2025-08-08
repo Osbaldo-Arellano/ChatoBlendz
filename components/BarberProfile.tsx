@@ -271,9 +271,9 @@ export default function BarberProfile() {
                 fontWeight: 700,
                 fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
                 fontSize: 12,
-                borderRadius: '5px',
-                width: 70,
-                height: 38,
+                borderRadius: '999px',
+                width: 40,
+                height: 40,
                 flexShrink: 0, // prevent shrinking
                 transition: 'background-color 0.2s ease',
                 '&:hover': {
@@ -281,7 +281,7 @@ export default function BarberProfile() {
                 },
               }}
             >
-              CALL&nbsp;ME
+              <PhoneIcon sx={{ fontSize: 16, color: 'white', mr: 0.5 }} />
             </Box>
           </Tooltip>
         </Box>

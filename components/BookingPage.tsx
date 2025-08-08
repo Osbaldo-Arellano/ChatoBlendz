@@ -90,7 +90,7 @@ export default function BookingPage() {
                 setCalendarOpen(true);
               }}
             />
-            <HighlightList
+            {/* <HighlightList
               onSelect={(s) => {
                 setSelectedService({
                   name: s.name,
@@ -100,7 +100,7 @@ export default function BookingPage() {
                 });
                 setCalendarOpen(true);
               }}
-            />
+            /> */}
             <Disclaimers />
           </>
         );
