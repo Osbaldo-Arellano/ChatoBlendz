@@ -95,7 +95,7 @@ export default function ServiceList({ onSelect }: { onSelect: (service: any) => 
         services.map((service) => (
           <Box
             key={service._id || service.name}
-            sx={{ borderBottom: '1px solid #e0e0e0', paddingX: 2, paddingY: 1.5 }}
+            sx={{ borderBottom: '1px solid #e0e0e0', paddingX: 3, paddingY: 3 }}
           >
             <Grid
               container

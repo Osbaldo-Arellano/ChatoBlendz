@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Box, Button, useTheme, useMediaQuery } from '@mui/material';
 
 const tabs = ['Services', 'Portfolio', 'Contact', 'Availability'];
@@ -14,13 +15,59 @@ export default function SectionNav({
   const theme = useTheme();
   const isMdUp = useMediaQuery(theme.breakpoints.up('md'));
 
+  // refs to measure buttons
+  const navRef = useRef<HTMLDivElement | null>(null);
+  const btnRefs = useRef<Record<string, HTMLButtonElement | null>>({});
+
+  // underline position + size
+  const [indicator, setIndicator] = useState<{ left: number; width: number }>({
+    left: 0,
+    width: 0,
+  });
+
+  // Measure the active tab and place indicator
+  const updateIndicator = () => {
+    const container = navRef.current;
+    const btn = btnRefs.current[active];
+    if (!container || !btn) return;
+
+    const cRect = container.getBoundingClientRect();
+    const bRect = btn.getBoundingClientRect();
+    setIndicator({
+      left: bRect.left - cRect.left,
+      width: bRect.width,
+    });
+  };
+
+  // Measure on mount, active change, and when layout changes
+  useLayoutEffect(() => {
+    updateIndicator();
+    // re-measure after font load / layout settle
+    const id = requestAnimationFrame(updateIndicator);
+    return () => cancelAnimationFrame(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [active]);
+
+  useEffect(() => {
+    const onResize = () => updateIndicator();
+    window.addEventListener('resize', onResize);
+    // also watch scroll container resizes (e.g., responsive container)
+    const ro = new ResizeObserver(onResize);
+    if (navRef.current) ro.observe(navRef.current);
+    return () => {
+      window.removeEventListener('resize', onResize);
+      ro.disconnect();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <Box
       sx={{
         position: 'sticky',
         top: 0,
         zIndex: 100,
-        backgroundColor: 'white',
+        bgcolor: 'white',
         borderBottom: '1px solid #eee',
         boxShadow: '0 2px 4px rgba(0,0,0,0.04)',
         display: 'flex',
@@ -29,7 +76,9 @@ export default function SectionNav({
       }}
     >
       <Box
+        ref={navRef}
         sx={{
+          position: 'relative',
           display: 'flex',
           justifyContent: isMdUp ? 'flex-start' : 'center',
           alignItems: 'center',
@@ -39,12 +88,29 @@ export default function SectionNav({
           maxWidth: '1200px',
         }}
       >
+        {/* Animated underline */}
+        <Box
+          sx={{
+            position: 'absolute',
+            bottom: 0,
+            height: 2,
+            left: indicator.left,
+            width: indicator.width,
+            bgcolor: 'black',
+            borderRadius: 1,
+            transition: 'left 250ms cubic-bezier(.2,.7,.2,1), width 250ms cubic-bezier(.2,.7,.2,1)',
+            pointerEvents: 'none',
+          }}
+        />
+
         {tabs.map((tab) => {
           const isActive = active === tab;
-
           return (
             <Button
               key={tab}
+              ref={(el) => {
+                btnRefs.current[tab] = el;
+              }}
               onClick={() => onChange(tab)}
               disableRipple
               sx={{
@@ -52,15 +118,14 @@ export default function SectionNav({
                 py: 1,
                 minWidth: 'unset',
                 color: isActive ? 'black' : '#666',
-                fontWeight: isActive ? 700 : 500,
-                fontSize: '0.75rem',
+                fontWeight: isActive ? 700 : 600,
+                fontSize: { xs: '0.75rem', sm: '0.75rem', lg: '0.9rem' },
                 textTransform: 'uppercase',
-                borderBottom: isActive ? '2px solid black' : '2px solid transparent',
                 borderRadius: 0,
-                transition: 'all 0.2s ease-in-out',
+
+                transition: 'color 200ms ease, transform 150ms ease',
                 '&:hover': {
                   color: 'black',
-                  borderBottom: isActive ? '2px solid black' : '2px solid #ccc',
                   backgroundColor: 'transparent',
                   transform: 'translateY(-1px)',
                 },
