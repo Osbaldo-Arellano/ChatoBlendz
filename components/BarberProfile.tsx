@@ -19,12 +19,12 @@ import InstagramIcon from '@mui/icons-material/Instagram';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import StarIcon from '@mui/icons-material/Star';
-import StarHalfIcon from '@mui/icons-material/StarHalf';
-import EastIcon from '@mui/icons-material/East';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import MapIcon from '@mui/icons-material/MapTwoTone';
 import Image from 'next/image';
 import dynamic from 'next/dynamic';
+import Snackbar from '@mui/material/Snackbar';
+import Alert from '@mui/material/Alert';
 
 import client from '@/lib/sanityClient';
 import imageUrlBuilder from '@sanity/image-url';
@@ -45,6 +45,8 @@ export default function BarberProfile() {
   const [galleryImages, setGalleryImages] = useState<string[]>([]);
   const [stripImages, setStripImages] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
+
+  const [openSnackbar, setOpenSnackbar] = useState(false);
 
   // Promo (optional) — falls back to null if nothing found
   const [promo, setPromo] = useState<string | null>(null);
@@ -408,8 +410,18 @@ export default function BarberProfile() {
 
                 <Tooltip title="Book Now">
                   <IconButton
-                    component="a"
-                    href="#services"
+                    onClick={(e) => {
+                      e.preventDefault(); // prevent full reload if using anchor
+                      setOpenSnackbar(true);
+                      // Smooth scroll to services section
+                      const el = document.getElementById('services');
+                      if (el) {
+                        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                      } else {
+                        // fallback to navigate to tab
+                        window.location.href = '/?tab=Services#services';
+                      }
+                    }}
                     sx={{
                       bgcolor: '#f1f1f1',
                       color: 'black',
@@ -417,8 +429,12 @@ export default function BarberProfile() {
                     }}
                   >
                     <Typography
-                      color="text.primary"
-                      sx={{ maxWidth: 360, color: 'black', fontWeight: 550, fontSize: '0.9rem' }}
+                      sx={{
+                        maxWidth: 360,
+                        color: 'black',
+                        fontWeight: 550,
+                        fontSize: '0.9rem',
+                      }}
                     >
                       BOOK
                     </Typography>
@@ -444,6 +460,17 @@ export default function BarberProfile() {
           </Typography>
         </Popover>
       </Box>
+
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={3000}
+        onClose={() => setOpenSnackbar(false)}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert onClose={() => setOpenSnackbar(false)} sx={{ width: '100%' }}>
+          Please select a service to continue
+        </Alert>
+      </Snackbar>
     </Box>
   );
 }
