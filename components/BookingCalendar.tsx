@@ -28,6 +28,12 @@ import TimeSlotSelector from './TimeSlotSelector';
 import { useRouter } from 'next/navigation';
 import FullscreenLoading from './FullscreenLoading';
 import PhoneNumberField from './PhoneInput';
+import dynamic from 'next/dynamic';
+import loadingGreyAnimation from '@/lottiefiles/cat Mark loading.json';
+
+const Player = dynamic(() => import('@lottiefiles/react-lottie-player').then((m) => m.Player), {
+  ssr: false,
+});
 
 dayjs.extend(isSameOrAfter);
 dayjs.extend(isSameOrBefore);
@@ -512,7 +518,7 @@ export default function CombinedBookingModal({
               },
             }}
           >
-            Confirmation <ChevronRightIcon sx={{ fontSize: '1rem', color: 'white' }} />
+            Confirmation
           </Button>
         )}
 
@@ -526,14 +532,27 @@ export default function CombinedBookingModal({
               fontWeight: 'bold',
               flex: 1,
               borderRadius: 2,
+              position: 'relative', // so Player can be absolutely positioned
+              overflow: 'hidden',
               '&.Mui-disabled': {
-                backgroundColor: 'grey.400',
+                backgroundColor: 'black',
                 color: 'white',
               },
             }}
           >
-            {bookingSuccess ? 'Please wait...' : 'Confirm'}
-            <CheckCircleIcon sx={{ ml: 1, color: bookingSuccess ? 'white' : 'green' }} />
+            {bookingSuccess ? (
+              <>
+                Please wait...
+                <Player
+                  autoplay
+                  loop
+                  src={loadingGreyAnimation}
+                  style={{ height: '100%', width: '100%' }}
+                />
+              </>
+            ) : (
+              <>Confirm</>
+            )}
           </Button>
         )}
       </DialogActions>

@@ -455,8 +455,7 @@ export default function BarberProfile() {
           PaperProps={{ sx: { px: 2, py: 1.5, borderRadius: 2 } }}
         >
           <Typography variant="body2" color="text.secondary" sx={{ maxWidth: 360 }}>
-            Same-day bookings when available. Walk in scruffy, walk out sharp. Go to my contact page
-            to call me directly.
+            Same-day bookings when available. Go to my contact page to call me directly.
           </Typography>
         </Popover>
       </Box>
