@@ -231,7 +231,7 @@ export default function CombinedBookingModal({
   };
 
   async function handleConfirmBooking() {
-    setBookingInProgress(true); // <-- Start showing the FullscreenLoading
+    // setBookingInProgress(true);
 
     const payload = {
       date: selectedDay.format('YYYY-MM-DD'),
@@ -247,16 +247,24 @@ export default function CombinedBookingModal({
     };
 
     try {
-      const res = await fetch('/api/schedule', {
+      const res = await fetch('/api/createAppointment', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
-
       if (!res.ok) throw new Error('Failed to schedule appointment.');
 
-      setBookingSuccess(true);
+      // Optionally read the created appointment (e.g., id) from the API
+      const data = await res.json().catch(() => ({}));
+      const summary = {
+        appointmentId: data?.id ?? null,
+        ...payload,
+      };
 
+      // Stash for /success page (cleared after read)
+      sessionStorage.setItem('bookingSummary', JSON.stringify(summary));
+
+      setBookingSuccess(true);
       setTimeout(() => {
         router.push('/success');
       }, 3500);
@@ -524,7 +532,7 @@ export default function CombinedBookingModal({
               },
             }}
           >
-            {bookingSuccess ? 'Booked!' : 'Confirm'}
+            {bookingSuccess ? 'Please wait...' : 'Confirm'}
             <CheckCircleIcon sx={{ ml: 1, color: bookingSuccess ? 'white' : 'green' }} />
           </Button>
         )}
