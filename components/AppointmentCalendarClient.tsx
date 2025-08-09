@@ -7,6 +7,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import BlockTimeButton from './BlockTimeButton';
 import client from '@/lib/sanityClient';
+import AdminCreateAppointmentButton from '@/components/AdminCreateAppointmentButton';
 
 export type Appointment = {
   id: string | number;
@@ -21,7 +22,6 @@ export type Appointment = {
   total_price?: number;
   sms_reminder?: string;
 };
-
 
 export type BlockedTime = {
   id: string;
@@ -152,6 +152,7 @@ export default function AppointmentCalendarClient() {
           m: 2,
         }}
       >
+        <AdminCreateAppointmentButton onSuccess={fetchData} />
         <BlockTimeButton availability={availability} onSuccess={fetchData} />
       </Box>
 
@@ -163,7 +164,6 @@ export default function AppointmentCalendarClient() {
         onBlockDelete={handleBlockDelete}
         onBlockUpdate={handleBlockUpdate}
       />
-
     </LocalizationProvider>
   );
 }

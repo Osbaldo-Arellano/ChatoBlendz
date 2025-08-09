@@ -10,6 +10,7 @@ import {
   Box,
   Alert,
 } from '@mui/material';
+import RemoveIcon from '@mui/icons-material/Remove';
 import { DatePicker, TimePicker } from '@mui/x-date-pickers';
 import { useState } from 'react';
 import { format, isBefore } from 'date-fns';
@@ -106,7 +107,12 @@ export default function BlockTimeButton({
 
   return (
     <>
-      <Button variant="contained" onClick={() => setOpen(true)}>
+      <Button
+        variant="contained"
+        startIcon={<RemoveIcon />}
+        onClick={() => setOpen(true)}
+        sx={{ borderRadius: 1, m: 2, textTransform: 'none', fontWeight: 700 }}
+      >
         Block Time
       </Button>
       <Dialog open={open} onClose={() => setOpen(false)} maxWidth="sm" fullWidth>
